@@ -1,4 +1,5 @@
-Crypto Tracker 🚀
+Crypto Pulse 🚀
+
 A sleek and interactive cryptocurrency tracking web application built with React.js, Chart.js, and Material UI. This app provides real-time market data, historical price trends, and interactive charts, offering users an intuitive way to track cryptocurrency prices in INR, USD, and more.
 
 Features
