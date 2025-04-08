@@ -5,15 +5,12 @@ const NodeCache = require("node-cache");
 
 const app = express();
 
-// Create a cache with a TTL (time-to-live) of 60 seconds
 const cache = new NodeCache({ stdTTL: 300 });
 
 app.use(cors());
 
-// Helper function to get a cache key from the request
 const getCacheKey = (req) => req.originalUrl;
 
-// Endpoint for CoinList and TrendingCoins (both use the same base path)
 app.get("/api/coins/markets", async (req, res) => {
   const cacheKey = getCacheKey(req);
   if (cache.has(cacheKey)) {
@@ -21,7 +18,6 @@ app.get("/api/coins/markets", async (req, res) => {
     return res.json(cache.get(cacheKey));
   }
   try {
-    // Forward all query parameters received from the client to CoinGecko
     const response = await axios.get(
       "https://api.coingecko.com/api/v3/coins/markets",
       { params: req.query }
@@ -34,7 +30,6 @@ app.get("/api/coins/markets", async (req, res) => {
   }
 });
 
-// Endpoint for SingleCoin
 app.get("/api/coins/:id", async (req, res) => {
   const cacheKey = getCacheKey(req);
   if (cache.has(cacheKey)) {
@@ -52,7 +47,6 @@ app.get("/api/coins/:id", async (req, res) => {
   }
 });
 
-// Endpoint for HistoricalChart
 app.get("/api/coins/:id/market_chart", async (req, res) => {
   const cacheKey = getCacheKey(req);
   if (cache.has(cacheKey)) {
@@ -61,7 +55,6 @@ app.get("/api/coins/:id/market_chart", async (req, res) => {
   }
   try {
     const { id } = req.params;
-    // The query parameters (vs_currency and days) will be forwarded automatically
     const response = await axios.get(
       `https://api.coingecko.com/api/v3/coins/${id}/market_chart`,
       { params: req.query }
