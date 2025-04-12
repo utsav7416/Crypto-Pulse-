@@ -27,6 +27,7 @@ function App() {
   return (
     <BrowserRouter>
       <div className={classes.App}>
+      
         <Header />
         <Switch>
           <Route path="/" component={Homepage} exact />
