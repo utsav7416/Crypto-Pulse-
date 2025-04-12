@@ -132,6 +132,7 @@ const CoinPage = () => {
               )}
             </Typography>
           </span>
+          
           <span style={{ display: "flex" }}>
             <Typography variant="h5" className={classes.heading}>
               Market Cap:
