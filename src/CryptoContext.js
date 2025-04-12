@@ -7,7 +7,6 @@ const CryptoContext = ({ children }) => {
     const [currency, setCurrency] = useState("INR");
     const [symbol, setSymbol] = useState("₹");
 
-    // This will run every time the currency changes
     useEffect(() => {
         if (currency === "INR") setSymbol("₹");
         else if (currency === "USD") setSymbol("$");
