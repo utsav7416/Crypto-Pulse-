@@ -1,22 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Pagination from "@material-ui/lab/Pagination";
 import {
+  makeStyles,
   Container,
   createTheme,
-  TableCell,
-  LinearProgress,
   ThemeProvider,
+  LinearProgress,
   Typography,
   TextField,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableContainer,
-  Table,
+  Fade,
   Paper,
 } from "@material-ui/core";
-
+import Pagination from "@material-ui/lab/Pagination";
 import axios from "axios";
 import { CoinList } from "../config/api";
 import { useHistory } from "react-router-dom";
@@ -26,188 +20,305 @@ export function numberWithCommas(x) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-export default function CoinsTable() {
+const useStyles = makeStyles((theme) => ({
+  root: {
+    background: "linear-gradient(135deg, #1c1c1c, #2b2b2b)",
+    minHeight: "100vh",
+    padding: theme.spacing(4, 0),
+    fontFamily: "'Montserrat', sans-serif",
+  },
+  container: {
+    textAlign: "center",
+    maxWidth: "1200px",
+    margin: "0 auto",
+    padding: theme.spacing(0, 2),
+  },
+  introBox: {
+    background: "linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.02))",
+    border: "1px solid rgba(255, 215, 0, 0.3)",
+    borderRadius: 12,
+    padding: theme.spacing(3),
+    marginBottom: theme.spacing(4),
+    color: "#ccc",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: theme.spacing(4),
+    flexWrap: "wrap",
+  },
+  introText: {
+    flex: 1,
+    minWidth: 260,
+  },
+  introImage: {
+    width: 100,
+    height: 100,
+    objectFit: "contain",
+    animation: `$float 4s ease-in-out infinite`,
+  },
+  "@keyframes float": {
+    "0%": { transform: "translateY(0px)" },
+    "50%": { transform: "translateY(-10px)" },
+    "100%": { transform: "translateY(0px)" },
+  },
+  heading: {
+    marginBottom: theme.spacing(3),
+    fontWeight: 700,
+    color: "#fff",
+  },
+  search: {
+    marginBottom: theme.spacing(3),
+    width: "100%",
+    "& .MuiOutlinedInput-root": {
+      "& fieldset": { borderColor: "#777" },
+      "&:hover fieldset": { borderColor: "#FFD700" },
+      "&.Mui-focused fieldset": { borderColor: "#FFD700" },
+    },
+    "& input": { color: "#fff" },
+    "& label": { color: "#fff" },
+  },
+  grid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+    gap: theme.spacing(4),
+  },
+  tile: {
+    position: "relative",
+    background: "#1f1f1f",
+    borderRadius: "15px",
+    padding: theme.spacing(3),
+    overflow: "hidden",
+    boxShadow: "0 8px 24px rgba(0, 0, 0, 0.6)",
+    transition: "transform 0.4s ease, box-shadow 0.4s ease",
+    transformStyle: "preserve-3d",
+    perspective: "1000px",
+    cursor: "pointer",
+    transform: "rotateY(0deg)",
+    "&:hover": {
+      transform: "rotateY(5deg) translateY(-10px) scale(1.02)",
+      boxShadow: "0 16px 36px rgba(255, 215, 0, 0.4)",
+    },
+    "&::before": {
+      content: '""',
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      borderRadius: "15px",
+      background: "linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,215,0,0.05))",
+      opacity: 0,
+      transition: "opacity 0.4s ease",
+      zIndex: 1,
+    },
+    "&:hover::before": {
+      opacity: 1,
+    },
+  },
+  tileContent: {
+    position: "relative",
+    zIndex: 2,
+    textAlign: "center",
+  },
+  coinImage: {
+    height: 60,
+    width: 60,
+    objectFit: "contain",
+    marginBottom: theme.spacing(1),
+    transition: "transform 0.3s ease",
+    "&:hover": { transform: "scale(1.1)" },
+  },
+  coinSymbol: {
+    fontSize: "1.6rem",
+    fontWeight: "bold",
+    textTransform: "uppercase",
+    color: "#FFD700",
+    marginBottom: theme.spacing(0.5),
+  },
+  coinName: {
+    fontSize: "1rem",
+    color: "#ccc",
+    marginBottom: theme.spacing(1),
+  },
+  coinData: {
+    fontSize: "0.9rem",
+    color: "#eee",
+    margin: theme.spacing(0.5, 0),
+  },
+  profit: {
+    color: "rgb(14, 203, 129)",
+  },
+  loss: {
+    color: "red",
+  },
+
+  pagination: {
+    marginTop: theme.spacing(4),
+    display: "flex",
+    justifyContent: "center", 
+    "& .MuiPaginationItem-root": {
+      color: "gold",
+      fontFamily: "'Montserrat', sans-serif",
+      transition: "all 0.3s ease",
+      margin: "0 4px",
+      borderRadius: "4px",
+      padding: "8px 12px",
+      "&:hover": {
+        transform: "scale(1.1)",
+        backgroundColor: "rgba(255, 215, 0, 0.15)",
+      },
+      "&.Mui-selected": {
+        backgroundColor: "gold",
+        color: "#000",
+        fontWeight: "bold",
+        "&:hover": { backgroundColor: "gold" },
+      },
+    },
+  },
+  
+}));
+
+const darkTheme = createTheme({
+  palette: {
+    primary: { main: "#fff" },
+    type: "dark",
+  },
+  typography: {
+    fontFamily: "'Montserrat', sans-serif",
+  },
+});
+
+export default function EnhancedCoinsTable() {
   const [coins, setCoins] = useState([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-
   const { currency, symbol } = CryptoState();
-
-  const useStyles = makeStyles({
-    row: {
-      backgroundColor: "#16171a",
-      cursor: "pointer",
-      "&:hover": {
-        backgroundColor: "#131111",
-      },
-      fontFamily: "Montserrat",
-    },
-    pagination: {
-      "& .MuiPaginationItem-root": {
-        color: "gold",
-      },
-    },
-  });
-
   const classes = useStyles();
   const history = useHistory();
-
-  const darkTheme = createTheme({
-    palette: {
-      primary: {
-        main: "#fff",
-      },
-      type: "dark",
-    },
-  });
 
   const fetchCoins = async () => {
     setLoading(true);
     const { data } = await axios.get(CoinList(currency));
-    console.log(data);
-
     setCoins(data);
     setLoading(false);
   };
 
   useEffect(() => {
     fetchCoins();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currency]);
 
-  const handleSearch = () => {
-    return coins.filter(
+  const handleSearch = () =>
+    coins.filter(
       (coin) =>
-        coin.name.toLowerCase().includes(search) ||
-        coin.symbol.toLowerCase().includes(search)
+        coin.name.toLowerCase().includes(search.toLowerCase()) ||
+        coin.symbol.toLowerCase().includes(search.toLowerCase())
     );
-  };
 
   return (
     <ThemeProvider theme={darkTheme}>
-      <Container style={{ textAlign: "center" }}>
-        <Typography
-          variant="h4"
-          style={{ margin: 18, fontFamily: "Montserrat" }}
-        >
-          Cryptocurrency Prices by Market Cap
-        </Typography>
-        <TextField
-          label="Search For a Crypto Currency.."
-          variant="outlined"
-          style={{ marginBottom: 20, width: "100%" }}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <TableContainer component={Paper}>
-          {loading ? (
-            <LinearProgress style={{ backgroundColor: "gold" }} />
-          ) : (
-            <Table aria-label="simple table">
-              <TableHead style={{ backgroundColor: "#3a25d4" }}>
-                <TableRow>
-                  {["Coin", "Price", "24h Change", "Market Cap"].map((head) => (
-                    <TableCell
-                      style={{
-                        color: "black",
-                        fontWeight: "700",
-                        fontFamily: "Montserrat",
-                      }}
-                      key={head}
-                      align={head === "Coin" ? "" : "right"}
-                    >
-                      {head}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
+      <div className={classes.root}>
+        <Container className={classes.container}>
+        <Paper elevation={3} className={classes.introBox}>
+          <img
+            src="https://assets.coingecko.com/coins/images/1/large/bitcoin.png"
+            alt="Bitcoin"
+            className={classes.introImage}
+          />
+          <img
+            src="https://assets.coingecko.com/coins/images/279/large/ethereum.png"
+            alt="Ethereum"
+            className={classes.introImage}
+          />
+          <img
+            src="https://assets.coingecko.com/coins/images/2/large/litecoin.png"
+            alt="Litecoin"
+            className={classes.introImage}
+          />
+          <Typography variant="body1" className={classes.introText}>
+            This dashboard not only displays real-time market data but also integrates quantitative metrics such as{" "}
+            <strong style={{ color: "#FFD700" }}>Kurtosis</strong> — a statistical measure of tail risk and distribution
+            sharpness — and{" "}
+            <strong style={{ color: "#FFD700" }}>GARCH</strong> models, used in financial econometrics to model volatility.
+            These tools enable prediction of market turbulence and analysis of price anomalies in crypto assets.
+          </Typography>
+        </Paper>
 
-              <TableBody>
+
+          <Typography variant="h4" className={classes.heading}>
+            Dynamic crypto asset list displaying real-time price, market cap, and volatility indicators
+          </Typography>
+
+          <TextField
+            label="Search For a Cryptocurrency..."
+            variant="outlined"
+            className={classes.search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+            InputLabelProps={{ style: { color: "#fff" } }}
+            InputProps={{ style: { color: "#fff" } }}
+          />
+
+          {loading ? (
+            <LinearProgress style={{ backgroundColor: "gold", marginBottom: 20 }} />
+          ) : (
+            <Fade in timeout={600}>
+              <div className={classes.grid}>
                 {handleSearch()
                   .slice((page - 1) * 10, (page - 1) * 10 + 10)
-                  .map((row) => {
-                    const profit = row.price_change_percentage_24h > 0;
+                  .map((coin) => {
+                    const profit = coin.price_change_percentage_24h > 0;
                     return (
-                      <TableRow
-                        onClick={() => history.push(`/coins/${row.id}`)}
-                        className={classes.row}
-                        key={row.name}
+                      <div
+                        key={coin.id}
+                        className={classes.tile}
+                        onClick={() => history.push(`/coins/${coin.id}`)}
                       >
-                        <TableCell
-                          component="th"
-                          scope="row"
-                          style={{
-                            display: "flex",
-                            gap: 15,
-                          }}
-                        >
+                        <div className={classes.tileContent}>
                           <img
-                            src={row?.image}
-                            alt={row.name}
-                            height="50"
-                            style={{ marginBottom: 10 }}
+                            src={coin.image}
+                            alt={coin.name}
+                            className={classes.coinImage}
                           />
-                          <div
-                            style={{ display: "flex", flexDirection: "column" }}
+                          <Typography className={classes.coinSymbol}>
+                            {coin.symbol}
+                          </Typography>
+                          <Typography className={classes.coinName}>
+                            {coin.name}
+                          </Typography>
+                          <Typography className={classes.coinData}>
+                            {symbol} {numberWithCommas(coin.current_price.toFixed(2))}
+                          </Typography>
+                          <Typography
+                            className={`${classes.coinData} ${profit ? classes.profit : classes.loss}`}
                           >
-                            <span
-                              style={{
-                                textTransform: "uppercase",
-                                fontSize: 22,
-                              }}
-                            >
-                              {row.symbol}
-                            </span>
-                            <span style={{ color: "darkgrey" }}>
-                              {row.name}
-                            </span>
-                          </div>
-                        </TableCell>
-                        <TableCell align="right">
-                          {symbol}{" "}
-                          {numberWithCommas(row.current_price.toFixed(2))}
-                        </TableCell>
-                        <TableCell
-                          align="right"
-                          style={{
-                            color: profit > 0 ? "rgb(14, 203, 129)" : "red",
-                            fontWeight: 500,
-                          }}
-                        >
-                          {profit && "+"}
-                          {row.price_change_percentage_24h.toFixed(2)}%
-                        </TableCell>
-                        <TableCell align="right">
-                          {symbol}{" "}
-                          {numberWithCommas(
-                            row.market_cap.toString().slice(0, -6)
-                          )}
-                          M
-                        </TableCell>
-                      </TableRow>
+                            {profit ? "+" : ""}
+                            {coin.price_change_percentage_24h.toFixed(2)}%
+                          </Typography>
+                          <Typography className={classes.coinData}>
+                            Market Cap: {symbol}{" "}
+                            {numberWithCommas(coin.market_cap.toString().slice(0, -6))} M
+                          </Typography>
+                        </div>
+                      </div>
                     );
                   })}
-              </TableBody>
-            </Table>
+              </div>
+            </Fade>
           )}
-        </TableContainer>
 
-        {/* Comes from @material-ui/lab */}
-        <Pagination
-          count={(handleSearch()?.length / 10).toFixed(0)}
-          style={{
-            padding: 20,
-            width: "100%",
-            display: "flex",
-            justifyContent: "center",
-          }}
-          classes={{ ul: classes.pagination }}
-          onChange={(_, value) => {
-            setPage(value);
-            window.scroll(0, 450);
-          }}
-        />
-      </Container>
+          <Pagination
+            count={Math.ceil(handleSearch().length / 10)}
+            onChange={(_, value) => {
+              setPage(value);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            className={classes.pagination}
+          />
+        </Container>
+      </div>
     </ThemeProvider>
   );
 }
