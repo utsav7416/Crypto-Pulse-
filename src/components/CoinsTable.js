@@ -151,7 +151,6 @@ const useStyles = makeStyles((theme) => ({
   loss: {
     color: "red",
   },
-
   pagination: {
     marginTop: theme.spacing(4),
     display: "flex",
