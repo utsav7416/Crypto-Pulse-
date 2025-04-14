@@ -32,7 +32,6 @@ const Disclaimer = () => {
   );
 };
 
-
 const styles = {
   wrapper: {
     backgroundColor: '#14161a',
