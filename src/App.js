@@ -11,6 +11,8 @@ import AboutUs from "./Pages/AboutUs";
 import TermsOfService from "./Pages/TermsOfService";
 import Disclaimer from "./Pages/Disclaimer";
 
+import MoodAnalysis from './Pages/Mood';
+
 const useStyles = makeStyles(() => ({
   App: {
     backgroundColor: "#14161a",
@@ -31,12 +33,12 @@ function App() {
         <Header />
         <Switch>
           <Route path="/" component={Homepage} exact />
+          <Route path='/mood' component={MoodAnalysis} />
           <Route path="/coins/:id" component={CoinPage} exact />
           <Route path="/about-us" component={AboutUs} exact />
           <Route path="/terms-of-service" component={TermsOfService} exact />
           <Route path="/disclaimer" component={Disclaimer} exact />
         </Switch>
-        <Footer />
       </div>
     </BrowserRouter>
   );
