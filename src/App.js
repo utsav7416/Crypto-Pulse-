@@ -5,7 +5,6 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Homepage from "./Pages/HomePage";
 import CoinPage from "./Pages/CoinPage";
 import Header from "./components/Header";
-import Footer from "./components/Footer";
 
 import AboutUs from "./Pages/AboutUs";
 import TermsOfService from "./Pages/TermsOfService";
