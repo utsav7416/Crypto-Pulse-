@@ -14,6 +14,7 @@ from matplotlib.gridspec import GridSpec
 from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.patches import Rectangle
 
+
 matplotlib.use("Agg") 
 
 app = Flask(__name__)
