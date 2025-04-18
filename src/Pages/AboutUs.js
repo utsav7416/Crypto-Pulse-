@@ -27,7 +27,7 @@ const AboutUs = () => {
         />
 
         <p style={styles.text}>
-          Our team is made up of blockchain developers, financial analysts, and data engineers who are passionate about decentralization and innovation. Together, we aim to simplify crypto for everyone.
+          Our team is made up of ML engineers, financial analysts, and data engineers who are passionate about decentralization and innovation. Together, we aim to simplify crypto for everyone.
         </p>
 
         <p style={styles.text}>
