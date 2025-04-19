@@ -17,7 +17,7 @@ const AboutUs = () => {
         </p>
 
         <p style={styles.text}>
-          Our platform delivers real-time price tracking, historical data, and market trends for thousands of cryptocurrencies. Whether you're a curious beginner or a seasoned trader, we provide accurate and reliable insights to support your decisions.
+        Our platform delivers real-time price tracking, volatility monitoring, correlation matrix insights, liquidity migration trends, and advanced statistical analysis like kurtosis and GARCH/SGARCH parameters. Whether you're a curious beginner or a seasoned trader, we provide accurate and reliable market intelligence to support your decisions with clarity and confidence.
         </p>
 
         <img
