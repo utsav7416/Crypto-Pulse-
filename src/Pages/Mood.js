@@ -45,21 +45,21 @@ export default function Mood() {
   };
 
   return (
-    <Box minHeight="100vh" p={4} style={{ background: 'linear-gradient(to bottom right, #0f0f0f, #1a1a1a)' }}>
+    <Box minHeight="100vh" p={4} style={{ background: 'linear-gradient(to bottom right, #0f0f0f,rgb(8, 1, 1))' }}>
       <Box maxWidth="lg" mx="auto">
-        <Typography
-          variant="h4"
-          align="center"
-          gutterBottom
-          style={{
-            fontWeight: 700,
-            background: 'linear-gradient(to right, #1e3a8a, #1e40af)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent'
-          }}
-        >
-          Market Mood Analysis
-        </Typography>
+      <Typography
+        variant="h4"
+        align="center"
+        gutterBottom
+        style={{
+          fontWeight: 700,
+          color: '#5090fa' 
+        }}
+      >
+        Market Mood Analysis
+      </Typography>
+
+
 
         <Box mt={4} mb={6} p={3} borderRadius={16} boxShadow={6} style={{ backgroundColor: 'rgba(55, 65, 81, 0.5)', backdropFilter: 'blur(6px)' }}>
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
