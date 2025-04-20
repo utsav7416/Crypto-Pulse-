@@ -22,7 +22,7 @@ export function numberWithCommas(x) {
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    background: "linear-gradient(135deg, #1c1c1c, #2b2b2b)",
+    background: "linear-gradient(135deg, #1c1c1c,rgb(3, 14, 0))",
     minHeight: "100vh",
     padding: theme.spacing(4, 0),
     fontFamily: "'Montserrat', sans-serif",
@@ -49,6 +49,7 @@ const useStyles = makeStyles((theme) => ({
   introText: {
     flex: 1,
     minWidth: 260,
+    fontWeight: 600,
   },
   introImage: {
     width: 100,
@@ -90,34 +91,13 @@ const useStyles = makeStyles((theme) => ({
     overflow: "hidden",
     boxShadow: "0 8px 24px rgba(0, 0, 0, 0.6)",
     transition: "transform 0.4s ease, box-shadow 0.4s ease",
-    transformStyle: "preserve-3d",
-    perspective: "1000px",
     cursor: "pointer",
-    transform: "rotateY(0deg)",
     "&:hover": {
-      transform: "rotateY(5deg) translateY(-10px) scale(1.02)",
+      transform: "translateY(-10px) scale(1.02)",
       boxShadow: "0 16px 36px rgba(255, 215, 0, 0.4)",
-    },
-    "&::before": {
-      content: '""',
-      position: "absolute",
-      top: 0,
-      left: 0,
-      width: "100%",
-      height: "100%",
-      borderRadius: "15px",
-      background: "linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,215,0,0.05))",
-      opacity: 0,
-      transition: "opacity 0.4s ease",
-      zIndex: 1,
-    },
-    "&:hover::before": {
-      opacity: 1,
     },
   },
   tileContent: {
-    position: "relative",
-    zIndex: 2,
     textAlign: "center",
   },
   coinImage: {
@@ -130,7 +110,7 @@ const useStyles = makeStyles((theme) => ({
   },
   coinSymbol: {
     fontSize: "1.6rem",
-    fontWeight: "bold",
+    fontWeight: 700,
     textTransform: "uppercase",
     color: "#FFD700",
     marginBottom: theme.spacing(0.5),
@@ -154,7 +134,7 @@ const useStyles = makeStyles((theme) => ({
   pagination: {
     marginTop: theme.spacing(4),
     display: "flex",
-    justifyContent: "center", 
+    justifyContent: "center",
     "& .MuiPaginationItem-root": {
       color: "gold",
       fontFamily: "'Montserrat', sans-serif",
@@ -169,13 +149,13 @@ const useStyles = makeStyles((theme) => ({
       "&.Mui-selected": {
         backgroundColor: "gold",
         color: "#000",
-        fontWeight: "bold",
+        fontWeight: 700,
         "&:hover": { backgroundColor: "gold" },
       },
     },
   },
-  
 }));
+
 const darkTheme = createTheme({
   palette: {
     primary: { main: "#fff" },
@@ -187,17 +167,21 @@ const darkTheme = createTheme({
 });
 
 export default function EnhancedCoinsTable() {
+  const classes = useStyles();
+  const history = useHistory();
+  const { currency, symbol } = CryptoState();
+
   const [coins, setCoins] = useState([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const { currency, symbol } = CryptoState();
-  const classes = useStyles();
-  const history = useHistory();
+
+  const ITEMS_PER_PAGE = 6;
+  const TOTAL_COINS = 60;
 
   const fetchCoins = async () => {
     setLoading(true);
-    const { data } = await axios.get(CoinList(currency));
+    const { data } = await axios.get(CoinList(currency, TOTAL_COINS));
     setCoins(data);
     setLoading(false);
   };
@@ -213,35 +197,38 @@ export default function EnhancedCoinsTable() {
         coin.symbol.toLowerCase().includes(search.toLowerCase())
     );
 
+  const filtered = handleSearch();
+  const countPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const displayCoins = filtered.slice(
+    (page - 1) * ITEMS_PER_PAGE,
+    (page - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE
+  );
+
   return (
     <ThemeProvider theme={darkTheme}>
       <div className={classes.root}>
         <Container className={classes.container}>
-        <Paper elevation={3} className={classes.introBox}>
-          <img
-            src="https://assets.coingecko.com/coins/images/1/large/bitcoin.png"
-            alt="Bitcoin"
-            className={classes.introImage}
-          />
-          <img
-            src="https://assets.coingecko.com/coins/images/279/large/ethereum.png"
-            alt="Ethereum"
-            className={classes.introImage}
-          />
-          <img
-            src="https://assets.coingecko.com/coins/images/2/large/litecoin.png"
-            alt="Litecoin"
-            className={classes.introImage}
-          />
-          <Typography variant="body1" className={classes.introText}>
-            This dashboard not only displays real-time market data but also integrates quantitative metrics such as{" "}
-            <strong style={{ color: "#FFD700" }}>Kurtosis</strong> — a statistical measure of tail risk and distribution
-            sharpness — and{" "}
-            <strong style={{ color: "#FFD700" }}>GARCH</strong> models, used in financial econometrics to model volatility.
-            These tools enable prediction of market turbulence and analysis of price anomalies in crypto assets.
-          </Typography>
-        </Paper>
-
+          <Paper elevation={3} className={classes.introBox}>
+            <img
+              src="https://assets.coingecko.com/coins/images/1/large/bitcoin.png"
+              alt="Bitcoin"
+              className={classes.introImage}
+            />
+            <img
+              src="https://assets.coingecko.com/coins/images/279/large/ethereum.png"
+              alt="Ethereum"
+              className={classes.introImage}
+            />
+            <img
+              src="https://assets.coingecko.com/coins/images/2/large/litecoin.png"
+              alt="Litecoin"
+              className={classes.introImage}
+            />
+            <Typography variant="body1" className={classes.introText}>
+              This dashboard not only displays real-time market data but also integrates quantitative metrics such as{' '}
+              <strong style={{ color: '#FFD700' }}>Kurtosis</strong> and <strong style={{ color: '#FFD700' }}>GARCH</strong> models, enabling advanced volatility analysis.
+            </Typography>
+          </Paper>
 
           <Typography variant="h4" className={classes.heading}>
             Dynamic crypto asset list displaying real-time price, market cap, and volatility indicators
@@ -255,63 +242,53 @@ export default function EnhancedCoinsTable() {
               setSearch(e.target.value);
               setPage(1);
             }}
-            InputLabelProps={{ style: { color: "#fff" } }}
-            InputProps={{ style: { color: "#fff" } }}
           />
 
           {loading ? (
-            <LinearProgress style={{ backgroundColor: "gold", marginBottom: 20 }} />
+            <LinearProgress style={{ backgroundColor: 'gold', marginBottom: 20 }} />
           ) : (
             <Fade in timeout={600}>
               <div className={classes.grid}>
-                {handleSearch()
-                  .slice((page - 1) * 10, (page - 1) * 10 + 10)
-                  .map((coin) => {
-                    const profit = coin.price_change_percentage_24h > 0;
-                    return (
-                      <div
-                        key={coin.id}
-                        className={classes.tile}
-                        onClick={() => history.push(`/coins/${coin.id}`)}
-                      >
-                        <div className={classes.tileContent}>
-                          <img
-                            src={coin.image}
-                            alt={coin.name}
-                            className={classes.coinImage}
-                          />
-                          <Typography className={classes.coinSymbol}>
-                            {coin.symbol}
-                          </Typography>
-                          <Typography className={classes.coinName}>
-                            {coin.name}
-                          </Typography>
-                          <Typography className={classes.coinData}>
-                            {symbol} {numberWithCommas(coin.current_price.toFixed(2))}
-                          </Typography>
-                          <Typography
-                            className={`${classes.coinData} ${profit ? classes.profit : classes.loss}`}
-                          >
-                            {profit ? "+" : ""}
-                            {coin.price_change_percentage_24h.toFixed(2)}%
-                          </Typography>
-                          <Typography className={classes.coinData}>
-                            Market Cap: {symbol}{" "}
-                            {numberWithCommas(coin.market_cap.toString().slice(0, -6))} M
-                          </Typography>
-                        </div>
+                {displayCoins.map((coin) => {
+                  const profit = coin.price_change_percentage_24h > 0;
+                  return (
+                    <div
+                      key={coin.id}
+                      className={classes.tile}
+                      onClick={() => history.push(`/coins/${coin.id}`)}
+                    >
+                      <div className={classes.tileContent}>
+                        <img src={coin.image} alt={coin.name} className={classes.coinImage} />
+                        <Typography className={classes.coinSymbol}>{coin.symbol}</Typography>
+                        <Typography className={classes.coinName}>{coin.name}</Typography>
+                        <Typography className={classes.coinData}>
+                          {symbol} {numberWithCommas(coin.current_price.toFixed(2))}
+                        </Typography>
+                        <Typography
+                          className={`${classes.coinData} ${
+                            profit ? classes.profit : classes.loss
+                          }`}>
+                          {profit ? '+' : ''}{coin.price_change_percentage_24h.toFixed(2)}%
+                        </Typography>
+                        <Typography className={classes.coinData}>
+                          Market Cap: {symbol}{numberWithCommas(
+                            coin.market_cap.toString().slice(0, -6)
+                          )} M
+                        </Typography>
                       </div>
-                    );
-                  })}
+                    </div>
+                  );
+                })}
               </div>
             </Fade>
           )}
 
           <Pagination
-            count={Math.ceil(handleSearch().length / 10)}
+            count={countPages}
+            page={page}
             onChange={(_, value) => {
               setPage(value);
-              window.scrollTo({ top: 0, behavior: "smooth" });
+              window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             className={classes.pagination}
           />
