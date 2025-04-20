@@ -48,14 +48,24 @@ function Banner() {
             variant="subtitle2"
             style={{
               color: "gold",
-              textTransform: "capitalize",
-              fontSize: "1.4rem",  
+              fontWeight: "bold",
+              fontSize: "1.4rem",
               fontFamily: "Montserrat",
             }}
           >
-            Get all the Info regarding your favorite Crypto Currency
+            Charts talk. We listen.
           </Typography>
-
+          <Typography
+            variant="subtitle2"
+            style={{
+              color: "gold",
+              fontWeight: "bold",
+              fontSize: "1.4rem",
+              fontFamily: "Montserrat",
+            }}
+          >
+            Crypto moves fast. We move faster.
+          </Typography>
         </div>
         <Carousel />
       </Container>
