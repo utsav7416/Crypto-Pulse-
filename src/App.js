@@ -11,6 +11,8 @@ import TermsOfService from "./Pages/TermsOfService";
 import Disclaimer from "./Pages/Disclaimer";
 
 import MoodAnalysis from './Pages/Mood';
+import CorrelationMatrix from "./Pages/CorrelationMatrix";
+import LiquidityMigration from "./Pages/LiquidityMigration";
 
 const useStyles = makeStyles(() => ({
   App: {
@@ -28,12 +30,13 @@ function App() {
   return (
     <BrowserRouter>
       <div className={classes.App}>
-      
         <Header />
         <Switch>
           <Route path="/" component={Homepage} exact />
-          <Route path='/mood' component={MoodAnalysis} />
           <Route path="/coins/:id" component={CoinPage} exact />
+          <Route path="/mood" component={MoodAnalysis} />
+          <Route path="/correlation" component={CorrelationMatrix} />
+          <Route path="/liquidity-migration" component={LiquidityMigration} />
           <Route path="/about-us" component={AboutUs} exact />
           <Route path="/terms-of-service" component={TermsOfService} exact />
           <Route path="/disclaimer" component={Disclaimer} exact />
