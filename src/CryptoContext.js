@@ -21,7 +21,6 @@ const CryptoContext = ({ children }) => {
 
 export default CryptoContext;
 
-// Custom hook
 export const CryptoState = () => {
     return useContext(Crypto);
 };
