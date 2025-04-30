@@ -95,7 +95,6 @@ const styles = {
     marginTop: 15,
     marginBottom: 15
   },
-  // Info‑cards styles
   cardInfoContainer: {
     display: 'flex',
     justifyContent: 'space-between',
