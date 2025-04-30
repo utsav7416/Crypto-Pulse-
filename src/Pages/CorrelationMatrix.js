@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import * as ss from 'simple-statistics';
+
 const CoinList = (currency, perPage = 10) =>
   `/api/coins/markets?vs_currency=${currency}&order=market_cap_desc&per_page=${perPage}&page=1&sparkline=true`;
+
 const styles = {
   container: {
     display: 'flex',
