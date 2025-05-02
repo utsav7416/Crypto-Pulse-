@@ -332,11 +332,11 @@ const CorrelationMatrix = () => {
 
             <tbody>
               {volatilityData.map((d,i) => (
-                <tr key={i} style={{ backgroundColor:i%2===0?'#f8f4ff':'#ede433' }}>
+                <tr key={i} style={{ backgroundColor:i%2===0?'#f8f4ff':'#ede4ff' }}>
                   {[d.asset, d.volatility+'%', d.annualizedVol+'%', d.maxDrawdown+'%', d.valueAtRisk+'%', d.volatilityRatio, d.riskCategory].map((val,j) => (
                     <td key={j} style={{
                       ...styles.cell,
-                      fontWeight: j===6?700:60,
+                      fontWeight: j===6?700:600,
                       color: j===6?'#fff':styles.cell.color,
                       backgroundColor: j===6
                         ? (d.riskCategory==='High'   ? '#e53e3e'
