@@ -336,7 +336,7 @@ const CorrelationMatrix = () => {
                   {[d.asset, d.volatility+'%', d.annualizedVol+'%', d.maxDrawdown+'%', d.valueAtRisk+'%', d.volatilityRatio, d.riskCategory].map((val,j) => (
                     <td key={j} style={{
                       ...styles.cell,
-                      fontWeight: j===6?700:600,
+                      fontWeight: j===6?700:60,
                       color: j===6?'#fff':styles.cell.color,
                       backgroundColor: j===6
                         ? (d.riskCategory==='High'   ? '#e53e3e'
