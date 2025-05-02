@@ -329,6 +329,7 @@ const CorrelationMatrix = () => {
                 ))}
               </tr>
             </thead>
+            
             <tbody>
               {volatilityData.map((d,i) => (
                 <tr key={i} style={{ backgroundColor:i%2===0?'#f8f4ff':'#ede4ff' }}>
