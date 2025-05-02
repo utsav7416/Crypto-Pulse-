@@ -349,7 +349,6 @@ const CorrelationMatrix = () => {
             </tbody>
           </table>
         </div>
-
       </div>
     </div>
   );
