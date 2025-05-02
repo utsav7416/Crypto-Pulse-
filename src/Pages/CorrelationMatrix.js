@@ -329,10 +329,10 @@ const CorrelationMatrix = () => {
                 ))}
               </tr>
             </thead>
-            
+
             <tbody>
               {volatilityData.map((d,i) => (
-                <tr key={i} style={{ backgroundColor:i%2===0?'#f8f4ff':'#ede4ff' }}>
+                <tr key={i} style={{ backgroundColor:i%2===0?'#f8f4ff':'#ede433' }}>
                   {[d.asset, d.volatility+'%', d.annualizedVol+'%', d.maxDrawdown+'%', d.valueAtRisk+'%', d.volatilityRatio, d.riskCategory].map((val,j) => (
                     <td key={j} style={{
                       ...styles.cell,
