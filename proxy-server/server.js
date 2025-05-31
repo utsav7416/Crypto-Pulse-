@@ -1,3 +1,4 @@
+// proxy-server/server.js
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
@@ -13,8 +14,12 @@ const getCacheKey = (req) => req.originalUrl;
 
 app.use(
   "/predict",
+  // IMPORTANT CHANGE HERE: Target the Vercel-deployed Flask function directly
   createProxyMiddleware({
-    target: "http://localhost:5001",
+    target: "http://localhost:5000", // This is a placeholder; Vercel handles the internal routing
+    pathRewrite: {
+      '^/predict': '/api/predict', // Rewrite /predict to /api/predict for the Flask function
+    },
     changeOrigin: true,
     onProxyReq: (proxyReq, req, res) => {
       console.log("Forwarding request to Flask for coin:", req.params.coin_id);
