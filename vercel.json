@@ -3,7 +3,11 @@
   "builds": [
     {
       "src": "package.json",
-      "use": "@vercel/static-build"
+      "use": "@vercel/static-build",
+      "config": {
+        "installCommand": "npm install --legacy-peer-deps && cd proxy-server && pip install -r requirements.txt",
+        "buildCommand": "npm run build"
+      }
     },
     {
       "src": "proxy-server/app.py",
@@ -32,7 +36,5 @@
       "src": "/(.*)",
       "dest": "build/index.html"
     }
-  ],
-  "installCommand": "npm install --legacy-peer-deps && cd proxy-server && pip install -r requirements.txt",
-  "buildCommand": "npm run build"
+  ]
 }
