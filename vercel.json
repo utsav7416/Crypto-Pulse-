@@ -35,7 +35,7 @@
       "dest": "/public/$1"
     }
   ],
-  "installCommand": "npm install && (cd proxy-server && pip install -r requirements.txt)",
+  "installCommand": "npm install --legacy-peer-deps && (cd proxy-server && pip install -r requirements.txt)",
   "buildCommand": "npm run build",
   "public": true,
   "outputDirectory": "public"
