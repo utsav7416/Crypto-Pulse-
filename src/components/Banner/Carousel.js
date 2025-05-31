@@ -8,6 +8,7 @@ import { CryptoState } from "../../CryptoContext";
 import { numberWithCommas } from "../CoinsTable";
 
 const Carousel = () => {
+  
   const [trending, setTrending] = useState([]);
   const { currency, symbol } = CryptoState();
 
