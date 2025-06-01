@@ -3,10 +3,15 @@ const axios = require("axios");
 const cors = require("cors");
 const NodeCache = require("node-cache");
 const { createProxyMiddleware } = require("http-proxy-middleware");
-const path = require('path');
+const path = require("path");
 
 const app = express();
-const cache = new NodeCache({ stdTTL: 1200 }); 
+
+console.log("Render Environment Variables received by server.js:");
+console.log("process.env.FLASK_BACKEND_URL =", process.env.FLASK_BACKEND_URL);
+console.log("process.env.PORT =", process.env.PORT);
+
+const cache = new NodeCache({ stdTTL: 1200 });
 
 app.use(cors());
 
@@ -67,7 +72,7 @@ app.get("/api/coins/:id/market_chart", async (req, res) => {
   }
 });
 
-const FLASK_BACKEND_URL = process.env.FLASK_BACKEND_URL || 'http://localhost:5001';
+const FLASK_BACKEND_URL = process.env.FLASK_BACKEND_URL || "http://localhost:5001";
 
 app.use(
   "/predict",
@@ -80,10 +85,10 @@ app.use(
   })
 );
 
-app.use(express.static(path.join(__dirname, '../build')));
+app.use(express.static(path.join(__dirname, "../build")));
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../build', 'index.html'));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../build", "index.html"));
 });
 
 const PORT = process.env.PORT || 5000;
