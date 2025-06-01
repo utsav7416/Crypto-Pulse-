@@ -13,7 +13,7 @@ import matplotlib
 from matplotlib.gridspec import GridSpec
 from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.patches import Rectangle
-
+import os
 
 matplotlib.use("Agg") 
 
@@ -129,7 +129,7 @@ def predict_future_trend(coin_id):
     ax3.add_patch(Rectangle((0.05, 0.15), 0.9, 0.7, facecolor='white', alpha=0.5))
 
     ax3.text(0.5, 0.88, "Risk Analysis Implications", ha="center", va="center",
-            fontsize=16, fontweight='bold', color="darkgreen")
+             fontsize=16, fontweight='bold', color="darkgreen")
 
     implication_lines = [
         "• High kurtosis means higher",
@@ -147,7 +147,7 @@ def predict_future_trend(coin_id):
     line_spacing = 0.08
     for i, line in enumerate(implication_lines):
         ax3.text(0.08, start_y - i * line_spacing, line,
-                ha="left", va="top", fontsize=12.5, color="black", family='sans-serif')
+                 ha="left", va="top", fontsize=12.5, color="black", family='sans-serif')
 
     ax3.set_title("Investment Risk Analysis", fontsize=14, pad=5, color='darkgreen')
 
@@ -230,4 +230,5 @@ def predict_future_trend(coin_id):
     })
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)

@@ -3,6 +3,7 @@ const axios = require("axios");
 const cors = require("cors");
 const NodeCache = require("node-cache");
 const { createProxyMiddleware } = require("http-proxy-middleware");
+const path = require('path'); 
 
 const app = express();
 const cache = new NodeCache({ stdTTL: 300 });
@@ -11,21 +12,10 @@ app.use(cors());
 
 const getCacheKey = (req) => req.originalUrl;
 
-app.use(
-  "/predict",
-  createProxyMiddleware({
-    target: "http://localhost:5001",
-    changeOrigin: true,
-    onProxyReq: (proxyReq, req, res) => {
-      console.log("Forwarding request to Flask for coin:", req.params.coin_id);
-    }
-  })
-);
-
 app.get("/api/coins/markets", async (req, res) => {
   const cacheKey = getCacheKey(req);
   if (cache.has(cacheKey)) {
-    console.log("Serving from cache:", cacheKey);
+    console.log("Serving /api/coins/markets from cache:", cacheKey);
     return res.json(cache.get(cacheKey));
   }
   try {
@@ -44,7 +34,7 @@ app.get("/api/coins/markets", async (req, res) => {
 app.get("/api/coins/:id", async (req, res) => {
   const cacheKey = getCacheKey(req);
   if (cache.has(cacheKey)) {
-    console.log("Serving from cache:", cacheKey);
+    console.log("Serving /api/coins/:id from cache:", cacheKey);
     return res.json(cache.get(cacheKey));
   }
   try {
@@ -63,7 +53,7 @@ app.get("/api/coins/:id", async (req, res) => {
 app.get("/api/coins/:id/market_chart", async (req, res) => {
   const cacheKey = getCacheKey(req);
   if (cache.has(cacheKey)) {
-    console.log("Serving from cache:", cacheKey);
+    console.log("Serving /api/coins/:id/market_chart from cache:", cacheKey);
     return res.json(cache.get(cacheKey));
   }
   try {
@@ -80,5 +70,24 @@ app.get("/api/coins/:id/market_chart", async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 5000;
+const FLASK_BACKEND_URL = process.env.FLASK_BACKEND_URL || 'http://localhost:5001'; 
+
+app.use(
+  "/predict",
+  createProxyMiddleware({
+    target: FLASK_BACKEND_URL,
+    changeOrigin: true, 
+    onProxyReq: (proxyReq, req, res) => {
+      
+      console.log(`Forwarding request to Flask: ${req.originalUrl} to ${FLASK_BACKEND_URL}`);
+    },
+  })
+);
+
+app.use(express.static(path.join(__dirname, '../src/build')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../src/build', 'index.html'));
+});
+
 app.listen(PORT, () => console.log(`Proxy server running on port ${PORT}`));

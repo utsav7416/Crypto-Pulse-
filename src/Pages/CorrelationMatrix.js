@@ -11,7 +11,7 @@ const styles = {
     padding: 20,
     animation: 'fadeIn 1s ease-in-out',
     fontFamily: 'Segoe UI, sans-serif',
-    backgroundColor: '#0d0303b'
+    backgroundColor: '#0d0303'
   },
   card: {
     border: '2px solid #ddd',
@@ -135,7 +135,10 @@ const CorrelationMatrix = () => {
         setLoading(true);
         setError(null);
         const res = await fetch(CoinList('usd', 10));
-        if (!res.ok) throw new Error(`API error: ${res.status}`);
+        if (!res.ok) {
+          const errorText = await res.text();
+          throw new Error(`API error: ${res.status} - ${errorText || res.statusText}`);
+        }
         const data = await res.json();
 
         const priceMap = {};
@@ -150,7 +153,7 @@ const CorrelationMatrix = () => {
         setVolatilityData(calculateVolatilityMetrics(priceMap));
       } catch (err) {
         console.error('Error fetching correlation data:', err);
-        setError('Failed to fetch correlation data. Please try again later.');
+        setError(`Failed to fetch correlation data. Please ensure the proxy server is running and accessible. Error: ${err.message}`);
       } finally {
         setLoading(false);
       }
@@ -253,9 +256,15 @@ const CorrelationMatrix = () => {
     <div style={styles.container}>
       <div style={styles.card}>
         <h2 style={styles.title}>📊 Cryptocurrency Correlation Matrix</h2>
-        <p style={styles.paragraph}>Correlation is a statistical measure that expresses the extent to which two variables move in relation to each other. In cryptocurrency markets, correlation helps investors understand how the price of one cryptocurrency tends to change when another cryptocurrency's price changes.</p>
-        <p style={styles.paragraph}><strong>Correlation Coefficients:</strong><br />+1: Perfect positive correlation<br />0: No correlation<br />-1: Perfect negative correlation</p>
-        <p style={styles.paragraph}>In practice, most cryptocurrency pairs show positive correlation to some degree, with Bitcoin often influencing the broader market. Patterns can shift over time and during different conditions.</p>
+        <p style={styles.paragraph}>
+          Correlation is a statistical measure that expresses the extent to which two variables move in relation to each other. In cryptocurrency markets, correlation helps investors understand how the price of one cryptocurrency tends to change when another cryptocurrency's price changes.
+        </p>
+        <p style={styles.paragraph}>
+          <strong>Correlation Coefficients:</strong><br />+1: Perfect positive correlation<br />0: No correlation<br />-1: Perfect negative correlation
+        </p>
+        <p style={styles.paragraph}>
+          In practice, most cryptocurrency pairs show positive correlation to some degree, with Bitcoin often influencing the broader market. Patterns can shift over time and during different conditions.
+        </p>
         <ul style={styles.list}>
           <li><strong>Diversification:</strong> Select assets with low correlation to reduce portfolio risk.</li>
           <li><strong>Pairs Trading:</strong> Trade divergences expecting reversion.</li>
@@ -288,7 +297,6 @@ const CorrelationMatrix = () => {
         </div>
 
         <div style={styles.volSection}>
-          {/* Info cards above volatility table */}
           <div style={styles.cardInfoContainer}>
             <div style={styles.infoCard}>
               <div style={styles.infoTitle}>↻ Arithmetic Returns & Annualization</div>
