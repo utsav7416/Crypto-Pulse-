@@ -29,7 +29,7 @@ const CoinPage = () => {
 
   const fetchPrediction = async () => {
     try {
-      const res = await axios.get(`http://localhost:5001/predict/${id}`);
+      const res = await axios.get(`/predict/${id}`);
       setPredictionData(res.data);
     } catch (error) {
       console.error("Error fetching prediction data:", error);
