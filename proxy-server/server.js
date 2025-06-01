@@ -90,4 +90,5 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../src/build', 'index.html'));
 });
 
+const PORT = process.env.PORT || 5000; 
 app.listen(PORT, () => console.log(`Proxy server running on port ${PORT}`));
