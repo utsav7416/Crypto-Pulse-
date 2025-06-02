@@ -7,4 +7,5 @@ scipy
 arch 
 xgboost
 matplotlib
+scikit-learn
 gunicorn
