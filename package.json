@@ -40,8 +40,7 @@
     "start": "cross-env NODE_OPTIONS=--openssl-legacy-provider react-scripts start",
     "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "heroku-postbuild": "npm install --legacy-peer-deps && npm run build"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
@@ -64,5 +63,6 @@
   "devDependencies": {
     "@babel/plugin-proposal-optional-chaining": "^7.21.0",
     "cross-env": "^7.0.3"
-  }
+  },
+  "proxy": "http://localhost:5000"
 }

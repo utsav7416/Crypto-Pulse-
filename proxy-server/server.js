@@ -5,6 +5,7 @@ const NodeCache = require("node-cache");
 const path = require("path");
 
 const app = express();
+
 const cache = new NodeCache({ stdTTL: 7200 });
 
 app.use(cors());
@@ -17,7 +18,10 @@ app.get("/api/coins/markets", async (req, res) => {
     return res.json(cache.get(cacheKey));
   }
   try {
-    const response = await axios.get("https://api.coingecko.com/api/v3/coins/markets", { params: req.query });
+    const response = await axios.get(
+      "https://api.coingecko.com/api/v3/coins/markets",
+      { params: req.query }
+    );
     cache.set(cacheKey, response.data);
     res.json(response.data);
   } catch (error) {
@@ -38,7 +42,9 @@ app.get("/api/coins/:id", async (req, res) => {
   }
   try {
     const { id } = req.params;
-    const response = await axios.get(`https://api.coingecko.com/api/v3/coins/${id}`);
+    const response = await axios.get(
+      `https://api.coingecko.com/api/v3/coins/${id}`
+    );
     cache.set(cacheKey, response.data);
     res.json(response.data);
   } catch (error) {
@@ -59,7 +65,10 @@ app.get("/api/coins/:id/market_chart", async (req, res) => {
   }
   try {
     const { id } = req.params;
-    const response = await axios.get(`https://api.coingecko.com/api/v3/coins/${id}/market_chart`, { params: req.query });
+    const response = await axios.get(
+      `https://api.coingecko.com/api/v3/coins/${id}/market_chart`,
+      { params: req.query }
+    );
     cache.set(cacheKey, response.data);
     res.json(response.data);
   } catch (error) {
@@ -81,12 +90,14 @@ app.get("/predict/:coin_id", async (req, res) => {
     if (!FLASK_BACKEND_URL) {
       return res.status(500).json({ error: "Backend URL not configured." });
     }
-    const response = await axios.get(`${FLASK_BACKEND_URL}/predict/${coinId}`, { timeout: 180000 });
+    const response = await axios.get(`${FLASK_BACKEND_URL}/predict/${coinId}`, {
+      timeout: 180000
+    });
     res.status(response.status).json(response.data);
   } catch (error) {
     if (error.response) {
       res.status(error.response.status).json(error.response.data);
-    } else if (error.code === "ECONNABORTED" || error.message.includes("timeout")) {
+    } else if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
       res.status(504).json({ error: "Backend (Flask) request timed out." });
     } else {
       res.status(500).json({ error: "Failed to connect to Flask backend or unknown proxy error." });
