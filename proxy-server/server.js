@@ -6,10 +6,6 @@ const path = require("path");
 
 const app = express();
 
-console.log("Render Environment Variables received by server.js:");
-console.log("process.env.FLASK_BACKEND_URL =", process.env.FLASK_BACKEND_URL);
-console.log("process.env.PORT =", process.env.PORT);
-
 const cache = new NodeCache({ stdTTL: 7200 });
 
 app.use(cors());
@@ -29,8 +25,13 @@ app.get("/api/coins/markets", async (req, res) => {
     cache.set(cacheKey, response.data);
     res.json(response.data);
   } catch (error) {
-    console.error("Error fetching coins markets data:", error.message);
-    res.status(500).json({ error: "Error fetching data from CoinGecko" });
+    if (error.response && error.response.status === 429) {
+      res.status(429).json({ error: "CoinGecko API rate limit hit. Please try again later." });
+    } else if (error.response) {
+      res.status(error.response.status).json(error.response.data);
+    } else {
+      res.status(500).json({ error: "Error fetching data from CoinGecko" });
+    }
   }
 });
 
@@ -47,8 +48,13 @@ app.get("/api/coins/:id", async (req, res) => {
     cache.set(cacheKey, response.data);
     res.json(response.data);
   } catch (error) {
-    console.error("Error fetching single coin data:", error.message);
-    res.status(500).json({ error: "Error fetching data from CoinGecko" });
+    if (error.response && error.response.status === 429) {
+      res.status(429).json({ error: "CoinGecko API rate limit hit. Please try again later." });
+    } else if (error.response) {
+      res.status(error.response.status).json(error.response.data);
+    } else {
+      res.status(500).json({ error: "Error fetching data from CoinGecko" });
+    }
   }
 });
 
@@ -66,36 +72,38 @@ app.get("/api/coins/:id/market_chart", async (req, res) => {
     cache.set(cacheKey, response.data);
     res.json(response.data);
   } catch (error) {
-    console.error("Error fetching historical chart data:", error.message);
-    res.status(500).json({ error: "Error fetching data from CoinGecko" });
+    if (error.response && error.response.status === 429) {
+      res.status(429).json({ error: "CoinGecko API rate limit hit. Please try again later." });
+    } else if (error.response) {
+      res.status(error.response.status).json(error.response.data);
+    } else {
+      res.status(500).json({ error: "Error fetching data from CoinGecko" });
+    }
   }
 });
 
 const FLASK_BACKEND_URL = process.env.FLASK_BACKEND_URL || "http://localhost:5001";
 
 app.get("/predict/:coin_id", async (req, res) => {
-    const coinId = req.params.coin_id;
-    try {
-        if (!FLASK_BACKEND_URL) {
-            console.error("FLASK_BACKEND_URL is not set.");
-            return res.status(500).json({ error: "Backend URL not configured." });
-        }
-        const response = await axios.get(`${FLASK_BACKEND_URL}/predict/${coinId}`, {
-            timeout: 180000
-        });
-        res.status(response.status).json(response.data);
-    } catch (error) {
-        console.error(`Error forwarding /predict/${coinId} to Flask:`, error.message);
-        if (error.response) {
-            res.status(error.response.status).json(error.response.data);
-        } else if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
-            res.status(504).json({ error: "Backend (Flask) request timed out." });
-        } else {
-            res.status(500).json({ error: "Failed to connect to Flask backend or unknown proxy error." });
-        }
+  const coinId = req.params.coin_id;
+  try {
+    if (!FLASK_BACKEND_URL) {
+      return res.status(500).json({ error: "Backend URL not configured." });
     }
+    const response = await axios.get(`${FLASK_BACKEND_URL}/predict/${coinId}`, {
+      timeout: 180000
+    });
+    res.status(response.status).json(response.data);
+  } catch (error) {
+    if (error.response) {
+      res.status(error.response.status).json(error.response.data);
+    } else if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
+      res.status(504).json({ error: "Backend (Flask) request timed out." });
+    } else {
+      res.status(500).json({ error: "Failed to connect to Flask backend or unknown proxy error." });
+    }
+  }
 });
-
 
 app.use(express.static(path.join(__dirname, "../build")));
 

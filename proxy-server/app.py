@@ -23,8 +23,7 @@ CORS(app)
 
 @app.route('/predict/<coin_id>', methods=['GET'])
 def predict_future_trend(coin_id):
-    # --- CHANGE: Reduced historical days to avoid CoinGecko rate limits ---
-    days = 30 # Changed from 365. You can try 7 if 30 is still too much.
+    days = 30
     future_days = 10
     currency = "usd"
 
@@ -37,21 +36,17 @@ def predict_future_trend(coin_id):
         try:
             resp = requests.get(url, timeout=10)
             if resp.status_code == 200:
-                break # Success, exit retry loop
+                break
             elif resp.status_code == 429:
-                # Removed print statement for rate limit hit - user requested removal of excess logs
                 time.sleep(retry_delay_seconds)
                 retry_delay_seconds *= 2
             else:
-                # Removed print statement for other non-200 status codes
                 return jsonify({"error": f"Failed to fetch historical data from CoinGecko. Status: {resp.status_code}"}), 400
         except requests.exceptions.RequestException as e:
-            # Removed print statement for RequestException
             time.sleep(retry_delay_seconds)
             retry_delay_seconds *= 2
 
     if resp is None or resp.status_code != 200:
-        # Removed print statement for failed attempts
         return jsonify({"error": "Failed to fetch historical data from CoinGecko after multiple retries due to rate limit or network issue."}), 400
 
     data_json = resp.json()

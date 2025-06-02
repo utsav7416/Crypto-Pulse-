@@ -4,7 +4,7 @@ export const CoinList = (currency, perPage = 60, page = 1) =>
 export const SingleCoin = (id) =>
   `/api/coins/${id}`;
 
-export const HistoricalChart = (id, days = 365, currency) =>
+export const HistoricalChart = (id, days = 90, currency) =>
   `/api/coins/${id}/market_chart?vs_currency=${currency}&days=${days}`;
 
 
