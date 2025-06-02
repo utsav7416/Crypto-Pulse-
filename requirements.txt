@@ -1,0 +1,10 @@
+flask
+flask_cors
+requests
+numpy
+pandas
+scipy
+arch 
+xgboost
+matplotlib
+gunicorn
