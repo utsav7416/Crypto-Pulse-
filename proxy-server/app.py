@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request # Import 'request' to access query parameters
 from flask_cors import CORS
 import requests
 import numpy as np
@@ -21,33 +21,73 @@ matplotlib.use("Agg")
 app = Flask(__name__)
 CORS(app)
 
+# --- NEW ROUTE FOR /api/coins/markets ---
+@app.route('/api/coins/markets', methods=['GET'])
+def get_coins_markets():
+    # Get all query parameters from the incoming request and pass them to CoinGecko
+    params = request.args.to_dict()
+
+    max_retries = 5
+    retry_delay_seconds = 1 # Start with a shorter delay for general market data
+    resp = None
+
+    COINGECKO_BASE_URL = "https://api.coingecko.com/api/v3" # Define this once
+
+    for attempt in range(max_retries):
+        url = f"{COINGECKO_BASE_URL}/coins/markets"
+        try:
+            resp = requests.get(url, params=params, timeout=10)
+            if resp.status_code == 200:
+                break
+            elif resp.status_code == 429:
+                print(f"CoinGecko rate limit hit for /coins/markets. Retrying in {retry_delay_seconds}s...")
+                time.sleep(retry_delay_seconds)
+                retry_delay_seconds *= 2
+            else:
+                return jsonify({"error": f"Failed to fetch market data from CoinGecko. Status: {resp.status_code}"}), resp.status_code # Return CoinGecko's status
+        except requests.exceptions.RequestException as e:
+            print(f"Network error fetching /coins/markets: {e}. Retrying in {retry_delay_seconds}s...")
+            time.sleep(retry_delay_seconds)
+            retry_delay_seconds *= 2
+
+    if resp is None or resp.status_code != 200:
+        return jsonify({"error": "Failed to fetch market data from CoinGecko after multiple retries due to rate limit or network issue."}), 500 # Use 500 for server error
+
+    return jsonify(resp.json()), 200 # Return CoinGecko's successful JSON response
+# --- END NEW ROUTE ---
+
+
 @app.route('/predict/<coin_id>', methods=['GET'])
 def predict_future_trend(coin_id):
     days = 30
     future_days = 10
-    currency = "usd"
+    currency = "usd" # Ensure this is 'usd' or handled by a param if needed
 
     max_retries = 5
     retry_delay_seconds = 2
     resp = None
 
+    COINGECKO_BASE_URL = "https://api.coingecko.com/api/v3" # Define this once
+
     for attempt in range(max_retries):
-        url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart?vs_currency={currency}&days={days}"
+        url = f"{COINGECKO_BASE_URL}/coins/{coin_id}/market_chart?vs_currency={currency}&days={days}"
         try:
             resp = requests.get(url, timeout=10)
             if resp.status_code == 200:
                 break
             elif resp.status_code == 429:
+                print(f"CoinGecko rate limit hit for {coin_id}. Retrying in {retry_delay_seconds}s...")
                 time.sleep(retry_delay_seconds)
                 retry_delay_seconds *= 2
             else:
-                return jsonify({"error": f"Failed to fetch historical data from CoinGecko. Status: {resp.status_code}"}), 400
+                return jsonify({"error": f"Failed to fetch historical data from CoinGecko. Status: {resp.status_code}"}), resp.status_code
         except requests.exceptions.RequestException as e:
+            print(f"Network error fetching {coin_id}: {e}. Retrying in {retry_delay_seconds}s...")
             time.sleep(retry_delay_seconds)
             retry_delay_seconds *= 2
 
     if resp is None or resp.status_code != 200:
-        return jsonify({"error": "Failed to fetch historical data from CoinGecko after multiple retries due to rate limit or network issue."}), 400
+        return jsonify({"error": "Failed to fetch historical data from CoinGecko after multiple retries due to rate limit or network issue."}), 500
 
     data_json = resp.json()
     prices_list = data_json.get('prices', [])
@@ -111,7 +151,7 @@ def predict_future_trend(coin_id):
     ax1.plot(df["date"], df["price"], label="Historical Price", color="blue", linewidth=1.8)
     extended_dates_list = [last_date + datetime.timedelta(days=i) for i in range(len(xgb_preds_extended))]
     ax1.plot(extended_dates_list, xgb_preds_extended, label="XGBoost Forecast", color="orange",
-                            linewidth=2, marker='o', markersize=4)
+                             linewidth=2, marker='o', markersize=4)
     ax1.set_title("Historical Price + Extended XGBoost Forecast", fontsize=14)
     ax1.set_xlabel("Date", fontsize=12)
     ax1.set_ylabel("Price (USD)", fontsize=12)
@@ -147,7 +187,7 @@ def predict_future_trend(coin_id):
     ax3.add_patch(Rectangle((0.05, 0.15), 0.9, 0.7, facecolor='white', alpha=0.5))
 
     ax3.text(0.5, 0.88, "Risk Analysis Implications", ha="center", va="center",
-                                fontsize=16, fontweight='bold', color="darkgreen")
+                                 fontsize=16, fontweight='bold', color="darkgreen")
 
     implication_lines = [
         "• High kurtosis means higher",
@@ -165,7 +205,7 @@ def predict_future_trend(coin_id):
     line_spacing = 0.08
     for i, line in enumerate(implication_lines):
         ax3.text(0.08, start_y - i * line_spacing, line,
-                                ha="left", va="top", fontsize=12.5, color="black", family='sans-serif')
+                                 ha="left", va="top", fontsize=12.5, color="black", family='sans-serif')
 
     ax3.set_title("Investment Risk Analysis", fontsize=14, pad=5, color='darkgreen')
 
@@ -198,16 +238,16 @@ def predict_future_trend(coin_id):
 
     ax4.text(0, -0.1, f"Kurtosis: {daily_kurtosis:.2f}", ha='center', va='center', fontsize=14)
     ax4.text(0, -0.25, f"Classification: {kurt_class}", ha='center', va='center',
-                                fontsize=14, color=kurt_color, fontweight='bold')
+                                 fontsize=14, color=kurt_color, fontweight='bold')
     ax4.text(0, -0.4, "Values > 3 indicate fat tails\nand higher risk of extreme events",
-                                ha='center', va='center', fontsize=12)
+                                 ha='center', va='center', fontsize=12)
 
     ax4.set_xlim(-1.2, 1.2)
     ax4.set_ylim(-0.5, 1.2)
     ax4.axis('off')
     ax4.set_title("Kurtosis Risk Gauge", fontsize=14, pad=15)
 
-    ax5 = fig.add_subplot(gs[1, 1])
+    ax5 = fig.add_subplot(gs[1, 0])
     hb = ax5.hexbin(np.arange(len(returns)), returns, gridsize=20, cmap="Blues", mincnt=1)
     ax5.set_title("Daily Returns Hexbin", fontsize=14)
     ax5.set_xlabel("Observation Index", fontsize=12)
@@ -216,11 +256,11 @@ def predict_future_trend(coin_id):
     cbar.set_label("Count", fontsize=12)
     ax5.grid(alpha=0.4)
 
-    ax6 = fig.add_subplot(gs[1, 2])
+    ax6 = fig.add_subplot(gs[1, 1])
     df_30 = df.iloc[-30:].copy()
     bubble_size = (df_30["price"] / df_30["price"].mean()) * 200
     sc = ax6.scatter(df_30["return"], df_30["volume"], s=bubble_size,
-                                    alpha=0.6, c=df_30["price"], cmap="viridis", edgecolor="black")
+                                         alpha=0.6, c=df_30["price"], cmap="viridis", edgecolor="black")
     ax6.set_title("Returns vs. Volume (Last 30 Days)", fontsize=14)
     ax6.set_xlabel("Daily Return", fontsize=12)
     ax6.set_ylabel("Volume", fontsize=12)
