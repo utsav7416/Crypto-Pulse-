@@ -12,6 +12,7 @@ import {
 } from "@material-ui/core";
 import Pagination from "@material-ui/lab/Pagination";
 import axios from "axios";
+import { CoinList } from "../config/api";
 import { useHistory } from "react-router-dom";
 import { CryptoState } from "../CryptoContext";
 
@@ -180,10 +181,7 @@ export default function EnhancedCoinsTable() {
 
   const fetchCoins = async () => {
     setLoading(true);
-    // CHANGE THIS LINE: Proxy the request through your Flask backend
-    const { data } = await axios.get(
-      `/api/coins/markets?vs_currency=${currency}&order=market_cap_desc&per_page=${TOTAL_COINS}&page=1&sparkline=false`
-    );
+    const { data } = await axios.get(CoinList(currency, TOTAL_COINS));
     setCoins(data);
     setLoading(false);
   };
