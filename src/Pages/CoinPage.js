@@ -16,6 +16,8 @@ import { SingleCoin } from "../config/api";
 import { numberWithCommas } from "../components/CoinsTable";
 import { CryptoState } from "../CryptoContext";
 
+const AXIOS_PREDICTION_TIMEOUT = 180000; 
+
 const CoinPage = () => {
   const { id } = useParams();
   const [coin, setCoin] = useState();
@@ -29,7 +31,7 @@ const CoinPage = () => {
 
   const fetchPrediction = async () => {
     try {
-      const res = await axios.get(`/predict/${id}`);
+      const res = await axios.get(`/predict/${id}`, { timeout: AXIOS_PREDICTION_TIMEOUT });
       setPredictionData(res.data);
     } catch (error) {
       console.error("Error fetching prediction data:", error);
