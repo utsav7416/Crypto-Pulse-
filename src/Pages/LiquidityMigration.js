@@ -1,4 +1,3 @@
-// LiquidityMigration.js
 import React, { useState, useEffect } from 'react';
 import {
   AreaChart,
@@ -18,11 +17,6 @@ const formatCurrency = value =>
     maximumFractionDigits: 0
   }).format(value);
 
-/**
- * Generate simulated liquidity metrics with realistic market behavior
- * @param {number} timeWindow - number of days
- * @returns {Array<{ date: string; inflow: number; outflow: number; netFlow: number }>}
- */
 function calculateLiquidityMetrics(timeWindow = 7) {
   const results = [];
   const now = new Date();
@@ -69,7 +63,6 @@ export default function LiquidityMigration({ timeWindow = 7 }) {
     setMetrics(calculateLiquidityMetrics(timeWindow));
   }, [timeWindow]);
 
-  // Reveal animations
   useEffect(() => {
     const t1 = setTimeout(() => setShowChart(true), 100);
     const t2 = setTimeout(() => setShowTable(true), 400);
@@ -108,7 +101,7 @@ export default function LiquidityMigration({ timeWindow = 7 }) {
           marginBottom: 16,
           fontWeight: '900',
           letterSpacing: '0.05em',
-          color: '#1e90ff', // DodgerBlue for blue heading
+          color: '#1e90ff',
           textAlign: 'center'
         }}
       >
@@ -150,7 +143,6 @@ export default function LiquidityMigration({ timeWindow = 7 }) {
         <strong>Implications:</strong> Significant positive net flow indicates increased liquidity entering the pool, which can enhance trading efficiency and reduce slippage. Conversely, sustained negative net flow may signal liquidity withdrawal, potentially increasing volatility and impacting market depth. Monitoring these trends helps anticipate market sentiment and informs strategic decisions.
       </p>
 
-      {/* Chart Card */}
       <div
         style={{
           ...cardStyle,
@@ -226,7 +218,6 @@ export default function LiquidityMigration({ timeWindow = 7 }) {
         </div>
       </div>
 
-      {/* Table Card */}
       <div
         style={{
           ...cardStyle,
