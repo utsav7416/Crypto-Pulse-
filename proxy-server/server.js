@@ -2,7 +2,6 @@ const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
 const NodeCache = require("node-cache");
-const { createProxyMiddleware } = require("http-proxy-middleware");
 const path = require("path");
 
 const app = express();
@@ -11,7 +10,7 @@ console.log("Render Environment Variables received by server.js:");
 console.log("process.env.FLASK_BACKEND_URL =", process.env.FLASK_BACKEND_URL);
 console.log("process.env.PORT =", process.env.PORT);
 
-const cache = new NodeCache({ stdTTL: 1200 });
+const cache = new NodeCache({ stdTTL: 7200 });
 
 app.use(cors());
 
@@ -74,16 +73,29 @@ app.get("/api/coins/:id/market_chart", async (req, res) => {
 
 const FLASK_BACKEND_URL = process.env.FLASK_BACKEND_URL || "http://localhost:5001";
 
-app.use(
-  "/predict",
-  createProxyMiddleware({
-    target: FLASK_BACKEND_URL,
-    changeOrigin: true,
-    onProxyReq: (proxyReq, req, res) => {
-      console.log(`Forwarding request to Flask: ${req.originalUrl} to ${FLASK_BACKEND_URL}`);
-    },
-  })
-);
+app.get("/predict/:coin_id", async (req, res) => {
+    const coinId = req.params.coin_id;
+    try {
+        if (!FLASK_BACKEND_URL) {
+            console.error("FLASK_BACKEND_URL is not set.");
+            return res.status(500).json({ error: "Backend URL not configured." });
+        }
+        const response = await axios.get(`${FLASK_BACKEND_URL}/predict/${coinId}`, {
+            timeout: 180000
+        });
+        res.status(response.status).json(response.data);
+    } catch (error) {
+        console.error(`Error forwarding /predict/${coinId} to Flask:`, error.message);
+        if (error.response) {
+            res.status(error.response.status).json(error.response.data);
+        } else if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
+            res.status(504).json({ error: "Backend (Flask) request timed out." });
+        } else {
+            res.status(500).json({ error: "Failed to connect to Flask backend or unknown proxy error." });
+        }
+    }
+});
+
 
 app.use(express.static(path.join(__dirname, "../build")));
 
