@@ -23,7 +23,8 @@ CORS(app)
 
 @app.route('/predict/<coin_id>', methods=['GET'])
 def predict_future_trend(coin_id):
-    days = 365
+    # --- CHANGE: Reduced historical days to avoid CoinGecko rate limits ---
+    days = 30 # Changed from 365. You can try 7 if 30 is still too much.
     future_days = 10
     currency = "usd"
 
@@ -36,21 +37,21 @@ def predict_future_trend(coin_id):
         try:
             resp = requests.get(url, timeout=10)
             if resp.status_code == 200:
-                break
+                break # Success, exit retry loop
             elif resp.status_code == 429:
-                print(f"Flask: CoinGecko rate limit hit for {coin_id} (attempt {attempt+1}/{max_retries}). Retrying in {retry_delay_seconds} seconds...")
+                # Removed print statement for rate limit hit - user requested removal of excess logs
                 time.sleep(retry_delay_seconds)
                 retry_delay_seconds *= 2
             else:
-                print(f"Flask: Failed to fetch historical data for {coin_id}. Status: {resp.status_code}. Response: {resp.text}")
+                # Removed print statement for other non-200 status codes
                 return jsonify({"error": f"Failed to fetch historical data from CoinGecko. Status: {resp.status_code}"}), 400
         except requests.exceptions.RequestException as e:
-            print(f"Flask: RequestException fetching data for {coin_id} (attempt {attempt+1}/{max_retries}): {e}. Retrying in {retry_delay_seconds} seconds...")
+            # Removed print statement for RequestException
             time.sleep(retry_delay_seconds)
             retry_delay_seconds *= 2
 
     if resp is None or resp.status_code != 200:
-        print(f"Flask: Failed to fetch historical data for {coin_id} after {max_retries} attempts.")
+        # Removed print statement for failed attempts
         return jsonify({"error": "Failed to fetch historical data from CoinGecko after multiple retries due to rate limit or network issue."}), 400
 
     data_json = resp.json()
@@ -115,7 +116,7 @@ def predict_future_trend(coin_id):
     ax1.plot(df["date"], df["price"], label="Historical Price", color="blue", linewidth=1.8)
     extended_dates_list = [last_date + datetime.timedelta(days=i) for i in range(len(xgb_preds_extended))]
     ax1.plot(extended_dates_list, xgb_preds_extended, label="XGBoost Forecast", color="orange",
-                    linewidth=2, marker='o', markersize=4)
+                            linewidth=2, marker='o', markersize=4)
     ax1.set_title("Historical Price + Extended XGBoost Forecast", fontsize=14)
     ax1.set_xlabel("Date", fontsize=12)
     ax1.set_ylabel("Price (USD)", fontsize=12)
@@ -151,7 +152,7 @@ def predict_future_trend(coin_id):
     ax3.add_patch(Rectangle((0.05, 0.15), 0.9, 0.7, facecolor='white', alpha=0.5))
 
     ax3.text(0.5, 0.88, "Risk Analysis Implications", ha="center", va="center",
-                        fontsize=16, fontweight='bold', color="darkgreen")
+                                fontsize=16, fontweight='bold', color="darkgreen")
 
     implication_lines = [
         "• High kurtosis means higher",
@@ -169,7 +170,7 @@ def predict_future_trend(coin_id):
     line_spacing = 0.08
     for i, line in enumerate(implication_lines):
         ax3.text(0.08, start_y - i * line_spacing, line,
-                        ha="left", va="top", fontsize=12.5, color="black", family='sans-serif')
+                                ha="left", va="top", fontsize=12.5, color="black", family='sans-serif')
 
     ax3.set_title("Investment Risk Analysis", fontsize=14, pad=5, color='darkgreen')
 
@@ -202,9 +203,9 @@ def predict_future_trend(coin_id):
 
     ax4.text(0, -0.1, f"Kurtosis: {daily_kurtosis:.2f}", ha='center', va='center', fontsize=14)
     ax4.text(0, -0.25, f"Classification: {kurt_class}", ha='center', va='center',
-                        fontsize=14, color=kurt_color, fontweight='bold')
+                                fontsize=14, color=kurt_color, fontweight='bold')
     ax4.text(0, -0.4, "Values > 3 indicate fat tails\nand higher risk of extreme events",
-                        ha='center', va='center', fontsize=12)
+                                ha='center', va='center', fontsize=12)
 
     ax4.set_xlim(-1.2, 1.2)
     ax4.set_ylim(-0.5, 1.2)
@@ -224,7 +225,7 @@ def predict_future_trend(coin_id):
     df_30 = df.iloc[-30:].copy()
     bubble_size = (df_30["price"] / df_30["price"].mean()) * 200
     sc = ax6.scatter(df_30["return"], df_30["volume"], s=bubble_size,
-                            alpha=0.6, c=df_30["price"], cmap="viridis", edgecolor="black")
+                                    alpha=0.6, c=df_30["price"], cmap="viridis", edgecolor="black")
     ax6.set_title("Returns vs. Volume (Last 30 Days)", fontsize=14)
     ax6.set_xlabel("Daily Return", fontsize=12)
     ax6.set_ylabel("Volume", fontsize=12)
