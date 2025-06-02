@@ -5,7 +5,6 @@ const NodeCache = require("node-cache");
 const path = require("path");
 
 const app = express();
-
 const cache = new NodeCache({ stdTTL: 7200 });
 
 app.use(cors());
@@ -15,6 +14,7 @@ const getCacheKey = (req) => req.originalUrl;
 app.get("/api/coins/markets", async (req, res) => {
   const cacheKey = getCacheKey(req);
   if (cache.has(cacheKey)) {
+    console.log(`Cache hit for ${cacheKey}`);
     return res.json(cache.get(cacheKey));
   }
   try {
@@ -38,6 +38,7 @@ app.get("/api/coins/markets", async (req, res) => {
 app.get("/api/coins/:id", async (req, res) => {
   const cacheKey = getCacheKey(req);
   if (cache.has(cacheKey)) {
+    console.log(`Cache hit for ${cacheKey}`);
     return res.json(cache.get(cacheKey));
   }
   try {
@@ -61,6 +62,7 @@ app.get("/api/coins/:id", async (req, res) => {
 app.get("/api/coins/:id/market_chart", async (req, res) => {
   const cacheKey = getCacheKey(req);
   if (cache.has(cacheKey)) {
+    console.log(`Cache hit for ${cacheKey}`);
     return res.json(cache.get(cacheKey));
   }
   try {
