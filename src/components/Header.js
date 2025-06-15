@@ -77,10 +77,6 @@ export default function Sidebar() {
           <ListItemIcon className={classes.icon}><CorrelationIcon /></ListItemIcon>
           <ListItemText primary="Correlation Matrix & Volatility" classes={{ primary: classes.itemText }} />
         </ListItem>
-        <ListItem button component={Link} to="/liquidity-migration" className={`${classes.navItem} ${location.pathname === '/liquidity-migration' ? classes.activeItem : ''}`}>        
-          <ListItemIcon className={classes.icon}><TrendingUpIcon /></ListItemIcon>
-          <ListItemText primary="Liquidity Migration Visualizer" classes={{ primary: classes.itemText }} />
-        </ListItem>
       </List>
       <Box className={classes.footer}>
         <Divider style={{ backgroundColor: 'rgba(255,215,0,0.3)', marginBottom: 12 }} />
