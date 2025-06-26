@@ -139,6 +139,16 @@ const CoinPage = () => {
       marginTop: 20,
       boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
     },
+    gaugeImage: {
+      width: "100%",
+      maxWidth: "500px",
+      borderRadius: 10,
+      marginTop: 20,
+      marginBottom: 20,
+      boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+      display: "block",
+      margin: "20px auto",
+    },
     riskMetricsCard: {
       backgroundColor: "#2a2a2a",
       borderRadius: 12,
@@ -241,6 +251,22 @@ const CoinPage = () => {
             The visualization now includes an extended XGBoost forecast line and enhanced kurtosis details
             with a clear classification and hexbin overview.
           </Typography>
+
+          {predictionData.gauge_plot && (
+            <>
+              <Typography className={classes.mlSubHeading}>
+                Risk Assessment Gauge
+              </Typography>
+              <Typography variant="body2" style={{ opacity: 0.8, marginBottom: 10 }}>
+                Kurtosis-based risk meter showing current risk level with needle indicator.
+              </Typography>
+              <img
+                src={`data:image/png;base64,${predictionData.gauge_plot}`}
+                alt="Risk Assessment Gauge"
+                className={classes.gaugeImage}
+              />
+            </>
+          )}
 
           <Card className={classes.riskMetricsCard}>
             <CardContent>
