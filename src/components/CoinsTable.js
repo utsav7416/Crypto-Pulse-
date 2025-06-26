@@ -9,6 +9,8 @@ import {
   TextField,
   Fade,
   Paper,
+  Zoom,
+  Slide,
 } from "@material-ui/core";
 import Pagination from "@material-ui/lab/Pagination";
 import axios from "axios";
@@ -22,151 +24,270 @@ export function numberWithCommas(x) {
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    background: "linear-gradient(135deg, #1c1c1c,rgb(3, 14, 0))",
+    background: "linear-gradient(135deg, #000000 0%, #1a1a1a 25%, #0d2818 50%, #1a2e1a 75%, #0a0a0a 100%)",
     minHeight: "100vh",
     padding: theme.spacing(4, 0),
-    fontFamily: "'Montserrat', sans-serif",
+    fontFamily: "'Inter', 'Segoe UI', sans-serif",
+    position: "relative",
+    marginLeft: 260,
+    width: `calc(100% - 260px)`,
+    boxSizing: "border-box",
+    "@media (max-width: 768px)": {
+      marginLeft: 0,
+      width: "100%",
+    },
+    "&::before": {
+      content: '""',
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: "radial-gradient(circle at 25% 25%, rgba(16, 185, 129, 0.05) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(34, 197, 94, 0.03) 0%, transparent 50%)",
+      pointerEvents: "none",
+    }
   },
   container: {
     textAlign: "center",
     maxWidth: "1200px",
     margin: "0 auto",
-    padding: theme.spacing(0, 2),
+    padding: theme.spacing(0, 3),
+    position: "relative",
+    zIndex: 1,
   },
   introBox: {
-    background: "linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.02))",
-    border: "1px solid rgba(255, 215, 0, 0.3)",
-    borderRadius: 12,
-    padding: theme.spacing(3),
+    background: "rgba(0, 0, 0, 0.7)",
+    backdropFilter: "blur(20px)",
+    border: "1px solid rgba(16, 185, 129, 0.15)",
+    borderRadius: 24,
+    padding: theme.spacing(4),
     marginBottom: theme.spacing(4),
-    color: "#ccc",
+    color: "#ffffff",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     gap: theme.spacing(4),
     flexWrap: "wrap",
+    transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05)",
+    "&:hover": {
+      transform: "translateY(-4px)",
+      boxShadow: "0 12px 40px rgba(16, 185, 129, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
+      border: "1px solid rgba(16, 185, 129, 0.25)",
+    }
   },
   introText: {
     flex: 1,
-    minWidth: 260,
-    fontWeight: 600,
+    minWidth: 280,
+    fontWeight: 500,
+    fontSize: "1.1rem",
+    lineHeight: 1.6,
+    color: "#e0e0e0",
   },
   introImage: {
-    width: 100,
-    height: 100,
+    width: 72,
+    height: 72,
     objectFit: "contain",
-    animation: `$float 4s ease-in-out infinite`,
-  },
-  "@keyframes float": {
-    "0%": { transform: "translateY(0px)" },
-    "50%": { transform: "translateY(-10px)" },
-    "100%": { transform: "translateY(0px)" },
+    transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+    filter: "drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5))",
+    "&:hover": {
+      transform: "scale(1.1) rotate(5deg)",
+    }
   },
   heading: {
-    marginBottom: theme.spacing(3),
+    marginBottom: theme.spacing(4),
     fontWeight: 700,
-    color: "#fff",
+    fontSize: "3rem",
+    background: "linear-gradient(135deg, #ffffff 0%, #10b981 50%, #ffffff 100%)",
+    backgroundClip: "text",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    textShadow: "0 4px 8px rgba(0, 0, 0, 0.5)",
+    letterSpacing: "-0.02em",
   },
   search: {
-    marginBottom: theme.spacing(3),
+    marginBottom: theme.spacing(5),
     width: "100%",
+    maxWidth: 600,
+    margin: "0 auto",
+    marginBottom: theme.spacing(5),
     "& .MuiOutlinedInput-root": {
-      "& fieldset": { borderColor: "#777" },
-      "&:hover fieldset": { borderColor: "#FFD700" },
-      "&.Mui-focused fieldset": { borderColor: "#FFD700" },
+      background: "rgba(0, 0, 0, 0.6)",
+      backdropFilter: "blur(10px)",
+      borderRadius: 20,
+      transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+      "& fieldset": { 
+        borderColor: "rgba(16, 185, 129, 0.2)",
+        borderWidth: 1,
+      },
+      "&:hover fieldset": { 
+        borderColor: "rgba(16, 185, 129, 0.4)",
+      },
+      "&.Mui-focused fieldset": { 
+        borderColor: "#10b981",
+        boxShadow: "0 0 0 3px rgba(16, 185, 129, 0.1)",
+      },
+      "&:hover": {
+        transform: "translateY(-2px)",
+        background: "rgba(16, 185, 129, 0.05)",
+      }
     },
-    "& input": { color: "#fff" },
-    "& label": { color: "#fff" },
+    "& input": { 
+      color: "#ffffff",
+      fontSize: "1.1rem",
+      padding: theme.spacing(1.8, 2.5),
+      fontWeight: 500,
+    },
+    "& label": { 
+      color: "#cccccc",
+      fontSize: "1rem",
+      fontWeight: 500,
+    },
   },
   grid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-    gap: theme.spacing(4),
+    gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))",
+    gap: theme.spacing(3),
+    marginBottom: theme.spacing(5),
   },
   tile: {
-    position: "relative",
-    background: "#1f1f1f",
-    borderRadius: "15px",
+    background: "rgba(0, 0, 0, 0.8)",
+    backdropFilter: "blur(20px)",
+    borderRadius: 24,
     padding: theme.spacing(3),
-    overflow: "hidden",
-    boxShadow: "0 8px 24px rgba(0, 0, 0, 0.6)",
-    transition: "transform 0.4s ease, box-shadow 0.4s ease",
+    transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
     cursor: "pointer",
+    border: "1px solid rgba(16, 185, 129, 0.1)",
+    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.03)",
+    position: "relative",
+    overflow: "hidden",
+    "&::before": {
+      content: '""',
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: "linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, transparent 100%)",
+      opacity: 0,
+      transition: "opacity 0.3s ease",
+    },
     "&:hover": {
-      transform: "translateY(-10px) scale(1.02)",
-      boxShadow: "0 16px 36px rgba(255, 215, 0, 0.4)",
+      transform: "translateY(-8px) scale(1.02)",
+      boxShadow: "0 20px 50px rgba(16, 185, 129, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.08)",
+      border: "1px solid rgba(16, 185, 129, 0.2)",
+      "&::before": {
+        opacity: 1,
+      }
     },
   },
   tileContent: {
     textAlign: "center",
+    position: "relative",
+    zIndex: 1,
   },
   coinImage: {
-    height: 60,
-    width: 60,
+    height: 72,
+    width: 72,
     objectFit: "contain",
-    marginBottom: theme.spacing(1),
-    transition: "transform 0.3s ease",
-    "&:hover": { transform: "scale(1.1)" },
+    marginBottom: theme.spacing(2),
+    transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+    filter: "drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4))",
+    "&:hover": { 
+      transform: "scale(1.15)",
+    },
   },
   coinSymbol: {
-    fontSize: "1.6rem",
+    fontSize: "1.75rem",
     fontWeight: 700,
     textTransform: "uppercase",
-    color: "#FFD700",
+    background: "linear-gradient(135deg, #ffffff 0%, #10b981 50%, #ffffff 100%)",
+    backgroundClip: "text",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
     marginBottom: theme.spacing(0.5),
+    letterSpacing: "0.02em",
   },
   coinName: {
-    fontSize: "1rem",
-    color: "#ccc",
-    marginBottom: theme.spacing(1),
+    fontSize: "1.1rem",
+    color: "#cccccc",
+    marginBottom: theme.spacing(1.5),
+    fontWeight: 500,
   },
   coinData: {
-    fontSize: "0.9rem",
-    color: "#eee",
+    fontSize: "1rem",
+    color: "#ffffff",
     margin: theme.spacing(0.5, 0),
+    fontWeight: 600,
   },
   profit: {
-    color: "rgb(14, 203, 129)",
+    color: "#10b981",
+    fontWeight: 700,
+    textShadow: "0 0 8px rgba(16, 185, 129, 0.3)",
   },
   loss: {
-    color: "red",
+    color: "#ef4444",
+    fontWeight: 700,
+    textShadow: "0 0 8px rgba(239, 68, 68, 0.3)",
   },
   pagination: {
-    marginTop: theme.spacing(4),
+    marginTop: theme.spacing(6),
     display: "flex",
     justifyContent: "center",
     "& .MuiPaginationItem-root": {
-      color: "gold",
-      fontFamily: "'Montserrat', sans-serif",
-      transition: "all 0.3s ease",
+      color: "#ffffff",
+      fontFamily: "'Inter', sans-serif",
+      transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+      fontWeight: 600,
+      background: "rgba(0, 0, 0, 0.6)",
+      border: "1px solid rgba(16, 185, 129, 0.15)",
+      backdropFilter: "blur(10px)",
+      borderRadius: 12,
       margin: "0 4px",
-      borderRadius: "4px",
-      padding: "8px 12px",
       "&:hover": {
-        transform: "scale(1.1)",
-        backgroundColor: "rgba(255, 215, 0, 0.15)",
+        background: "rgba(16, 185, 129, 0.1)",
+        transform: "translateY(-2px)",
+        boxShadow: "0 8px 20px rgba(0, 0, 0, 0.4)",
+        border: "1px solid rgba(16, 185, 129, 0.25)",
       },
       "&.Mui-selected": {
-        backgroundColor: "gold",
-        color: "#000",
-        fontWeight: 700,
-        "&:hover": { backgroundColor: "gold" },
+        background: "linear-gradient(135deg, #000000 0%, #10b981 50%, #000000 100%)",
+        color: "#ffffff",
+        border: "1px solid rgba(16, 185, 129, 0.3)",
+        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.6)",
+        "&:hover": { 
+          background: "linear-gradient(135deg, #0a0a0a 0%, #059669 50%, #0a0a0a 100%)",
+          transform: "translateY(-2px)",
+        },
       },
     },
   },
+  progressBar: {
+    background: "rgba(0, 0, 0, 0.8)",
+    borderRadius: 8,
+    height: 8,
+    marginBottom: 24,
+    backdropFilter: "blur(10px)",
+    border: "1px solid rgba(16, 185, 129, 0.1)",
+    "& .MuiLinearProgress-bar": {
+      background: "linear-gradient(90deg, #000000 0%, #10b981 50%, #000000 100%)",
+      borderRadius: 8,
+      boxShadow: "0 0 20px rgba(16, 185, 129, 0.2)",
+    }
+  }
 }));
 
-const darkTheme = createTheme({
+const balancedTheme = createTheme({
   palette: {
-    primary: { main: "#fff" },
+    primary: { main: "#10b981" },
     type: "dark",
   },
   typography: {
-    fontFamily: "'Montserrat', sans-serif",
+    fontFamily: "'Inter', 'Segoe UI', sans-serif",
   },
 });
 
-export default function EnhancedCoinsTable() {
+export default function BalancedCryptoTable() {
   const classes = useStyles();
   const history = useHistory();
   const { currency, symbol } = CryptoState();
@@ -205,37 +326,38 @@ export default function EnhancedCoinsTable() {
   );
 
   return (
-    <ThemeProvider theme={darkTheme}>
+    <ThemeProvider theme={balancedTheme}>
       <div className={classes.root}>
         <Container className={classes.container}>
-          <Paper elevation={3} className={classes.introBox}>
-            <img
-              src="https://assets.coingecko.com/coins/images/1/large/bitcoin.png"
-              alt="Bitcoin"
-              className={classes.introImage}
-            />
-            <img
-              src="https://assets.coingecko.com/coins/images/279/large/ethereum.png"
-              alt="Ethereum"
-              className={classes.introImage}
-            />
-            <img
-              src="https://assets.coingecko.com/coins/images/2/large/litecoin.png"
-              alt="Litecoin"
-              className={classes.introImage}
-            />
-            <Typography variant="body1" className={classes.introText}>
-              This dashboard not only displays real-time market data but also integrates quantitative metrics such as{' '}
-              <strong style={{ color: '#FFD700' }}>Kurtosis</strong> and <strong style={{ color: '#FFD700' }}>GARCH</strong> models, enabling advanced volatility analysis.
-            </Typography>
-          </Paper>
+          <Zoom in timeout={600}>
+            <Paper elevation={0} className={classes.introBox}>
+              <img
+                src="https://assets.coingecko.com/coins/images/1/large/bitcoin.png"
+                alt="Bitcoin"
+                className={classes.introImage}
+              />
+              <img
+                src="https://assets.coingecko.com/coins/images/279/large/ethereum.png"
+                alt="Ethereum"
+                className={classes.introImage}
+              />
+              <img
+                src="https://assets.coingecko.com/coins/images/2/large/litecoin.png"
+                alt="Litecoin"
+                className={classes.introImage}
+              />
+              <Typography variant="body1" className={classes.introText}>
+                Advanced cryptocurrency analytics with real-time market insights and portfolio tracking.
+              </Typography>
+            </Paper>
+          </Zoom>
 
-          <Typography variant="h4" className={classes.heading}>
-            Dynamic crypto asset list displaying real-time price, market cap, and volatility indicators
+          <Typography variant="h2" className={classes.heading}>
+            Modern Crypto Dashboard
           </Typography>
 
           <TextField
-            label="Search For a Cryptocurrency..."
+            label="Search cryptocurrencies..."
             variant="outlined"
             className={classes.search}
             onChange={(e) => {
@@ -245,38 +367,44 @@ export default function EnhancedCoinsTable() {
           />
 
           {loading ? (
-            <LinearProgress style={{ backgroundColor: 'gold', marginBottom: 20 }} />
+            <LinearProgress className={classes.progressBar} />
           ) : (
-            <Fade in timeout={600}>
+            <Fade in timeout={800}>
               <div className={classes.grid}>
-                {displayCoins.map((coin) => {
+                {displayCoins.map((coin, index) => {
                   const profit = coin.price_change_percentage_24h > 0;
                   return (
-                    <div
+                    <Slide
                       key={coin.id}
-                      className={classes.tile}
-                      onClick={() => history.push(`/coins/${coin.id}`)}
+                      direction="up"
+                      in
+                      timeout={400 + index * 100}
                     >
-                      <div className={classes.tileContent}>
-                        <img src={coin.image} alt={coin.name} className={classes.coinImage} />
-                        <Typography className={classes.coinSymbol}>{coin.symbol}</Typography>
-                        <Typography className={classes.coinName}>{coin.name}</Typography>
-                        <Typography className={classes.coinData}>
-                          {symbol} {numberWithCommas(coin.current_price.toFixed(2))}
-                        </Typography>
-                        <Typography
-                          className={`${classes.coinData} ${
-                            profit ? classes.profit : classes.loss
-                          }`}>
-                          {profit ? '+' : ''}{coin.price_change_percentage_24h.toFixed(2)}%
-                        </Typography>
-                        <Typography className={classes.coinData}>
-                          Market Cap: {symbol}{numberWithCommas(
-                            coin.market_cap.toString().slice(0, -6)
-                          )} M
-                        </Typography>
+                      <div
+                        className={classes.tile}
+                        onClick={() => history.push(`/coins/${coin.id}`)}
+                      >
+                        <div className={classes.tileContent}>
+                          <img src={coin.image} alt={coin.name} className={classes.coinImage} />
+                          <Typography className={classes.coinSymbol}>{coin.symbol}</Typography>
+                          <Typography className={classes.coinName}>{coin.name}</Typography>
+                          <Typography className={classes.coinData}>
+                            {symbol} {numberWithCommas(coin.current_price.toFixed(2))}
+                          </Typography>
+                          <Typography
+                            className={`${classes.coinData} ${
+                              profit ? classes.profit : classes.loss
+                            }`}>
+                            {profit ? '+' : ''}{coin.price_change_percentage_24h.toFixed(2)}%
+                          </Typography>
+                          <Typography className={classes.coinData}>
+                            Cap: {symbol}{numberWithCommas(
+                              coin.market_cap.toString().slice(0, -6)
+                            )}M
+                          </Typography>
+                        </div>
                       </div>
-                    </div>
+                    </Slide>
                   );
                 })}
               </div>

@@ -11,42 +11,141 @@ import {
   TrendingUp as TrendingUpIcon
 } from '@material-ui/icons';
 
-const drawerWidth = 240;
+const drawerWidth = 260;
 
 const useStyles = makeStyles(theme => ({
-  drawer: { width: drawerWidth, flexShrink: 0 },
+  drawer: { 
+    width: drawerWidth, 
+    flexShrink: 0,
+    zIndex: 1200,
+  },
   drawerPaper: {
     width: drawerWidth,
-    backgroundColor: '#111',
-    borderRight: '2px solid #FFD700',
-    color: '#fff',
-    boxShadow: 'none',
+    background: 'linear-gradient(180deg, #000000 0%, #0a0a0a 30%, #1a4d1a 60%, #10b981 100%)',
+    borderRight: '2px solid rgba(16, 185, 129, 0.3)',
+    color: '#ffffff',
+    boxShadow: '4px 0 20px rgba(16, 185, 129, 0.2)',
+    backdropFilter: 'blur(10px)',
+    position: 'fixed',
+    height: '100vh',
+    overflowY: 'auto',
+    top: 0,
+    left: 0,
   },
   logo: {
-    fontFamily: 'Montserrat, sans-serif',
-    fontWeight: 800,
-    fontSize: '1.5rem',
-    color: '#0e0be0',
+    fontFamily: "'Inter', sans-serif",
+    fontWeight: 700,
+    fontSize: '1.8rem',
+    background: 'linear-gradient(135deg, #ffffff 0%, #10b981 50%, #ffffff 100%)',
+    backgroundClip: 'text',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
     textAlign: 'center',
-    padding: theme.spacing(2),
+    padding: theme.spacing(3, 2),
     marginBottom: theme.spacing(1),
     textDecoration: 'none',
+    transition: 'all 0.3s ease',
+    display: 'block',
+    '&:hover': {
+      transform: 'scale(1.05)',
+      textShadow: '0 0 20px rgba(16, 185, 129, 0.6)',
+    }
+  },
+  navList: {
+    padding: theme.spacing(1, 2),
+    flex: 1,
   },
   navItem: {
-    margin: theme.spacing(1, 0),
-    borderRadius: 8,
-    transition: 'all 0.2s ease',
-    '&:hover': { backgroundColor: 'rgba(255,215,0,0.15)', transform: 'translateX(4px)' },
+    margin: theme.spacing(0.5, 0),
+    borderRadius: 16,
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    background: 'rgba(0, 0, 0, 0.4)',
+    border: '1px solid rgba(16, 185, 129, 0.15)',
+    backdropFilter: 'blur(5px)',
+    '&:hover': { 
+      backgroundColor: 'rgba(16, 185, 129, 0.15)',
+      transform: 'translateX(8px) scale(1.02)',
+      border: '1px solid rgba(16, 185, 129, 0.4)',
+      boxShadow: '0 4px 16px rgba(16, 185, 129, 0.3)',
+    },
   },
   activeItem: {
-    backgroundColor: 'rgba(255,215,0,0.22)',
-    borderLeft: '4px solid #FFD700',
+    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+    borderLeft: '4px solid #10b981',
+    border: '1px solid rgba(16, 185, 129, 0.5)',
+    boxShadow: '0 4px 20px rgba(16, 185, 129, 0.4)',
+    transform: 'translateX(4px)',
   },
-  icon: { color: '#FFD700', minWidth: 36 },
-  itemText: { fontWeight: 700, fontSize: '1.05rem' },
-  footer: { position: 'absolute', bottom: 0, width: '100%', padding: theme.spacing(2) },
-  footerLink: { color: '#FFD700', textDecoration: 'none', display: 'flex', alignItems: 'center', marginBottom: theme.spacing(1) },
-  copyright: { fontSize: '0.8rem', opacity: 0.85, textAlign: 'center', marginTop: theme.spacing(1) }
+  icon: { 
+    color: '#10b981',
+    minWidth: 40,
+    transition: 'all 0.3s ease',
+    '& .MuiSvgIcon-root': {
+      fontSize: '1.4rem',
+    }
+  },
+  activeIcon: {
+    color: '#ffffff',
+    filter: 'drop-shadow(0 0 12px rgba(16, 185, 129, 0.8))',
+  },
+  itemText: { 
+    fontWeight: 600,
+    fontSize: '0.95rem',
+    fontFamily: "'Inter', sans-serif",
+    '& .MuiTypography-root': {
+      color: '#e0e0e0',
+      transition: 'color 0.3s ease',
+    }
+  },
+  activeItemText: {
+    '& .MuiTypography-root': {
+      color: '#ffffff',
+      fontWeight: 700,
+    }
+  },
+  divider: {
+    backgroundColor: 'rgba(16, 185, 129, 0.3)',
+    margin: theme.spacing(2, 0),
+  },
+  footer: { 
+    marginTop: 'auto',
+    width: '100%',
+    padding: theme.spacing(2),
+    background: 'linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.8) 100%)',
+    backdropFilter: 'blur(10px)',
+  },
+  footerLinks: {
+    marginBottom: theme.spacing(2),
+  },
+  footerLink: { 
+    color: '#cccccc',
+    textDecoration: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: theme.spacing(1),
+    padding: theme.spacing(0.5, 1),
+    borderRadius: 8,
+    fontSize: '0.85rem',
+    fontWeight: 500,
+    transition: 'all 0.3s ease',
+    '&:hover': {
+      color: '#10b981',
+      backgroundColor: 'rgba(16, 185, 129, 0.15)',
+      transform: 'translateX(4px)',
+    },
+    '& .MuiSvgIcon-root': {
+      marginRight: theme.spacing(1),
+      fontSize: '1.1rem',
+    }
+  },
+  copyright: { 
+    fontSize: '0.75rem',
+    opacity: 0.7,
+    textAlign: 'center',
+    marginTop: theme.spacing(1),
+    color: '#999999',
+    fontFamily: "'Inter', sans-serif",
+  }
 }));
 
 export default function Sidebar() {
@@ -55,38 +154,101 @@ export default function Sidebar() {
   const [showSidebar, setShowSidebar] = useState(true);
 
   useEffect(() => {
-    setShowSidebar(location.pathname === '/');
+    const showOnRoutes = ['/', '/mood', '/correlation', '/about-us', '/terms-of-service', '/disclaimer'];
+    setShowSidebar(showOnRoutes.includes(location.pathname));
   }, [location.pathname]);
+
+  const isActive = (path) => location.pathname === path;
 
   if (!showSidebar) return null;
 
   return (
-    <Drawer variant="permanent" anchor="left" classes={{ paper: classes.drawerPaper }} style={{ width: drawerWidth }}>
-      <Typography variant="h6" className={classes.logo} component={Link} to="/">Crypto Pulse</Typography>
-      <Divider style={{ backgroundColor: 'rgba(255,215,0,0.3)' }} />
-      <List>
-        <ListItem button component={Link} to="/" className={`${classes.navItem} ${location.pathname === '/' ? classes.activeItem : ''}`}>        
-          <ListItemIcon className={classes.icon}><DashboardIcon /></ListItemIcon>
-          <ListItemText primary="Dashboard" classes={{ primary: classes.itemText }} />
+    <Drawer 
+      variant="permanent" 
+      anchor="left" 
+      className={classes.drawer}
+      classes={{ paper: classes.drawerPaper }}
+    >
+      <Typography 
+        variant="h6" 
+        className={classes.logo} 
+        component={Link} 
+        to="/"
+      >
+        Crypto Pulse
+      </Typography>
+      
+      <Divider className={classes.divider} />
+      
+      <List className={classes.navList}>
+        <ListItem 
+          button 
+          component={Link} 
+          to="/" 
+          className={`${classes.navItem} ${isActive('/') ? classes.activeItem : ''}`}
+        >        
+          <ListItemIcon className={`${classes.icon} ${isActive('/') ? classes.activeIcon : ''}`}>
+            <DashboardIcon />
+          </ListItemIcon>
+          <ListItemText 
+            primary="Dashboard" 
+            className={`${classes.itemText} ${isActive('/') ? classes.activeItemText : ''}`}
+          />
         </ListItem>
-        <ListItem button component={Link} to="/mood" className={`${classes.navItem} ${location.pathname === '/mood' ? classes.activeItem : ''}`}>        
-          <ListItemIcon className={classes.icon}><MoodIcon /></ListItemIcon>
-          <ListItemText primary="Mood Analysis" classes={{ primary: classes.itemText }} />
+        
+        <ListItem 
+          button 
+          component={Link} 
+          to="/mood" 
+          className={`${classes.navItem} ${isActive('/mood') ? classes.activeItem : ''}`}
+        >        
+          <ListItemIcon className={`${classes.icon} ${isActive('/mood') ? classes.activeIcon : ''}`}>
+            <MoodIcon />
+          </ListItemIcon>
+          <ListItemText 
+            primary="Mood Analysis" 
+            className={`${classes.itemText} ${isActive('/mood') ? classes.activeItemText : ''}`}
+          />
         </ListItem>
-        <ListItem button component={Link} to="/correlation" className={`${classes.navItem} ${location.pathname === '/correlation' ? classes.activeItem : ''}`}>        
-          <ListItemIcon className={classes.icon}><CorrelationIcon /></ListItemIcon>
-          <ListItemText primary="Correlation Matrix & Volatility" classes={{ primary: classes.itemText }} />
+        
+        <ListItem 
+          button 
+          component={Link} 
+          to="/correlation" 
+          className={`${classes.navItem} ${isActive('/correlation') ? classes.activeItem : ''}`}
+        >        
+          <ListItemIcon className={`${classes.icon} ${isActive('/correlation') ? classes.activeIcon : ''}`}>
+            <CorrelationIcon />
+          </ListItemIcon>
+          <ListItemText 
+            primary="Correlation & Volatility" 
+            className={`${classes.itemText} ${isActive('/correlation') ? classes.activeItemText : ''}`}
+          />
         </ListItem>
       </List>
+      
       <Box className={classes.footer}>
-        <Divider style={{ backgroundColor: 'rgba(255,215,0,0.3)', marginBottom: 12 }} />
-        <Box>
-          <Link to="/about-us" className={classes.footerLink}><InfoIcon fontSize="small" style={{ marginRight: 8 }} />About Us</Link>
-          <Link to="/terms-of-service" className={classes.footerLink}><DescriptionIcon fontSize="small" style={{ marginRight: 8 }} />Terms of Service</Link>
-          <Link to="/disclaimer" className={classes.footerLink}><WarningIcon fontSize="small" style={{ marginRight: 8 }} />Disclaimer</Link>
+        <Divider className={classes.divider} />
+        <Box className={classes.footerLinks}>
+          <Link to="/about-us" className={classes.footerLink}>
+            <InfoIcon />
+            About Us
+          </Link>
+          <Link to="/terms-of-service" className={classes.footerLink}>
+            <DescriptionIcon />
+            Terms of Service
+          </Link>
+          <Link to="/disclaimer" className={classes.footerLink}>
+            <WarningIcon />
+            Disclaimer
+          </Link>
         </Box>
-        <Typography variant="body2" className={classes.copyright}>&copy; 2025 Crypto Pulse. All rights reserved.</Typography>
+        <Typography variant="body2" className={classes.copyright}>
+          &copy; 2025 Crypto Pulse. All rights reserved.
+        </Typography>
       </Box>
     </Drawer>
   );
 }
+
+export { drawerWidth };
