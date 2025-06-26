@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request # Import 'request' to access query parameters
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import requests
 import numpy as np
@@ -21,17 +21,15 @@ matplotlib.use("Agg")
 app = Flask(__name__)
 CORS(app)
 
-# --- NEW ROUTE FOR /api/coins/markets ---
 @app.route('/api/coins/markets', methods=['GET'])
 def get_coins_markets():
-    # Get all query parameters from the incoming request and pass them to CoinGecko
     params = request.args.to_dict()
 
     max_retries = 5
-    retry_delay_seconds = 1 # Start with a shorter delay for general market data
+    retry_delay_seconds = 1
     resp = None
 
-    COINGECKO_BASE_URL = "https://api.coingecko.com/api/v3" # Define this once
+    COINGECKO_BASE_URL = "https://api.coingecko.com/api/v3"
 
     for attempt in range(max_retries):
         url = f"{COINGECKO_BASE_URL}/coins/markets"
@@ -44,30 +42,28 @@ def get_coins_markets():
                 time.sleep(retry_delay_seconds)
                 retry_delay_seconds *= 2
             else:
-                return jsonify({"error": f"Failed to fetch market data from CoinGecko. Status: {resp.status_code}"}), resp.status_code # Return CoinGecko's status
+                return jsonify({"error": f"Failed to fetch market data from CoinGecko. Status: {resp.status_code}"}), resp.status_code
         except requests.exceptions.RequestException as e:
             print(f"Network error fetching /coins/markets: {e}. Retrying in {retry_delay_seconds}s...")
             time.sleep(retry_delay_seconds)
             retry_delay_seconds *= 2
 
     if resp is None or resp.status_code != 200:
-        return jsonify({"error": "Failed to fetch market data from CoinGecko after multiple retries due to rate limit or network issue."}), 500 # Use 500 for server error
+        return jsonify({"error": "Failed to fetch market data from CoinGecko after multiple retries due to rate limit or network issue."}), 500
 
-    return jsonify(resp.json()), 200 # Return CoinGecko's successful JSON response
-# --- END NEW ROUTE ---
-
+    return jsonify(resp.json()), 200
 
 @app.route('/predict/<coin_id>', methods=['GET'])
 def predict_future_trend(coin_id):
     days = 30
     future_days = 10
-    currency = "usd" # Ensure this is 'usd' or handled by a param if needed
+    currency = "usd"
 
     max_retries = 5
     retry_delay_seconds = 2
     resp = None
 
-    COINGECKO_BASE_URL = "https://api.coingecko.com/api/v3" # Define this once
+    COINGECKO_BASE_URL = "https://api.coingecko.com/api/v3"
 
     for attempt in range(max_retries):
         url = f"{COINGECKO_BASE_URL}/coins/{coin_id}/market_chart?vs_currency={currency}&days={days}"
@@ -213,7 +209,6 @@ def predict_future_trend(coin_id):
 
     gauge_min, gauge_max = 0, 10
     theta = np.linspace(0.25 * np.pi, 0.75 * np.pi, 100)
-
     r_inner, r_outer = 0.6, 1.0
     for i, color in enumerate(['green', 'yellow', 'red']):
         mask = np.logical_and(
@@ -247,7 +242,7 @@ def predict_future_trend(coin_id):
     ax4.axis('off')
     ax4.set_title("Kurtosis Risk Gauge", fontsize=14, pad=15)
 
-    ax5 = fig.add_subplot(gs[1, 0])
+    ax5 = fig.add_subplot(gs[1, 1])
     hb = ax5.hexbin(np.arange(len(returns)), returns, gridsize=20, cmap="Blues", mincnt=1)
     ax5.set_title("Daily Returns Hexbin", fontsize=14)
     ax5.set_xlabel("Observation Index", fontsize=12)
@@ -256,7 +251,7 @@ def predict_future_trend(coin_id):
     cbar.set_label("Count", fontsize=12)
     ax5.grid(alpha=0.4)
 
-    ax6 = fig.add_subplot(gs[1, 1])
+    ax6 = fig.add_subplot(gs[1, 2])
     df_30 = df.iloc[-30:].copy()
     bubble_size = (df_30["price"] / df_30["price"].mean()) * 200
     sc = ax6.scatter(df_30["return"], df_30["volume"], s=bubble_size,
@@ -268,12 +263,55 @@ def predict_future_trend(coin_id):
     cbar2.set_label("Price (USD)", fontsize=12, rotation=270, labelpad=15)
     ax6.grid(alpha=0.4)
 
+    gauge_fig = plt.figure(figsize=(8, 6))
+    gauge_ax = gauge_fig.add_subplot(111)
+    
+    gauge_theta = np.linspace(0.25 * np.pi, 0.75 * np.pi, 100)
+    for i, color in enumerate(['green', 'yellow', 'red']):
+        mask = np.logical_and(
+            gauge_theta >= 0.25 * np.pi + i * (0.5 * np.pi / 3),
+            gauge_theta <= 0.25 * np.pi + (i + 1) * (0.5 * np.pi / 3)
+        )
+        theta_section = gauge_theta[mask]
+        gauge_ax.fill_between(
+            np.cos(theta_section), np.sin(theta_section), 0,
+            color=color, alpha=0.7
+        )
+
+    gauge_ax.text(0, 0.3, "Low Risk", ha='center', va='center', fontsize=12, color='green', fontweight='bold')
+    gauge_ax.text(-0.5, 0.6, "Medium Risk", ha='center', va='center', fontsize=12, color='black', fontweight='bold')
+    gauge_ax.text(0.5, 0.6, "High Risk", ha='center', va='center', fontsize=12, color='red', fontweight='bold')
+
+    gauge_needle_theta = 0.25 * np.pi + min(daily_kurtosis / 10, 1) * 0.5 * np.pi
+    gauge_ax.plot([0, 0.8 * np.cos(gauge_needle_theta)], [0, 0.8 * np.sin(gauge_needle_theta)], 'k-', lw=3)
+    gauge_ax.add_patch(plt.Circle((0, 0), 0.05, color='black'))
+
+    gauge_ax.text(0, -0.1, f"Kurtosis: {daily_kurtosis:.2f}", ha='center', va='center', fontsize=14)
+    gauge_ax.text(0, -0.25, f"Classification: {kurt_class}", ha='center', va='center',
+                  fontsize=14, color=kurt_color, fontweight='bold')
+    gauge_ax.text(0, -0.4, "Values > 3 indicate fat tails\nand higher risk of extreme events",
+                  ha='center', va='center', fontsize=12)
+
+    gauge_ax.set_xlim(-1.2, 1.2)
+    gauge_ax.set_ylim(-0.5, 1.2)
+    gauge_ax.axis('off')
+    gauge_ax.set_title("Kurtosis Risk Gauge", fontsize=14, pad=15)
+
+    gauge_buf = io.BytesIO()
+    plt.figure(gauge_fig.number)
+    plt.tight_layout()
+    plt.savefig(gauge_buf, format="png")
+    gauge_buf.seek(0)
+    gauge_base64_img = base64.b64encode(gauge_buf.read()).decode("utf-8")
+    plt.close(gauge_fig)
+
     buf = io.BytesIO()
+    plt.figure(fig.number)
     plt.tight_layout()
     plt.savefig(buf, format="png")
     buf.seek(0)
     base64_img = base64.b64encode(buf.read()).decode("utf-8")
-    plt.close()
+    plt.close(fig)
 
     return jsonify({
         "coin_id": coin_id,
@@ -284,7 +322,8 @@ def predict_future_trend(coin_id):
         "sharpe_ratio": sharpe_ratio,
         "sortino_ratio": sortino_ratio,
         "kurtosis_classification": kurt_class,
-        "ml_plot": base64_img
+        "ml_plot": base64_img,
+        "gauge_plot": gauge_base64_img
     })
 
 if __name__ == '__main__':
