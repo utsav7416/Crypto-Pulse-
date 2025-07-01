@@ -24,7 +24,7 @@ export function numberWithCommas(x) {
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    background: "linear-gradient(135deg, #000000 0%, #1a1a1a 25%, #0d2818 50%, #1a2e1a 75%, #0a0a0a 100%)",
+    background: "linear-gradient(135deg, #000000 0%, #1a1a1a 25%, #0d4d25 50%, #1a2e1a 75%, #0a0a0a 100%)",
     minHeight: "100vh",
     padding: theme.spacing(4, 0),
     fontFamily: "'Inter', 'Segoe UI', sans-serif",
@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
       left: 0,
       right: 0,
       bottom: 0,
-      background: "radial-gradient(circle at 25% 25%, rgba(16, 185, 129, 0.05) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(34, 197, 94, 0.03) 0%, transparent 50%)",
+      background: "radial-gradient(circle at 25% 25%, rgba(0, 255, 0, 0.05) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(50, 255, 50, 0.03) 0%, transparent 50%)",
       pointerEvents: "none",
     }
   },
@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
   introBox: {
     background: "rgba(0, 0, 0, 0.7)",
     backdropFilter: "blur(20px)",
-    border: "1px solid rgba(16, 185, 129, 0.15)",
+    border: "1px solid rgba(0, 255, 0, 0.3)",
     borderRadius: 24,
     padding: theme.spacing(4),
     marginBottom: theme.spacing(4),
@@ -72,8 +72,8 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05)",
     "&:hover": {
       transform: "translateY(-4px)",
-      boxShadow: "0 12px 40px rgba(16, 185, 129, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
-      border: "1px solid rgba(16, 185, 129, 0.25)",
+      boxShadow: "0 12px 40px rgba(0, 255, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
+      border: "1px solid rgba(0, 255, 0, 0.5)",
     }
   },
   introText: {
@@ -89,7 +89,7 @@ const useStyles = makeStyles((theme) => ({
     height: 72,
     objectFit: "contain",
     transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-    filter: "drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5))",
+    filter: "drop-shadow(0 4px 12px rgba(0, 255, 0, 0.5))",
     "&:hover": {
       transform: "scale(1.1) rotate(5deg)",
     }
@@ -98,11 +98,11 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(4),
     fontWeight: 700,
     fontSize: "3rem",
-    background: "linear-gradient(135deg, #ffffff 0%, #10b981 50%, #ffffff 100%)",
+    background: "linear-gradient(135deg, #ffffff 0%, #00ff00 50%, #ffffff 100%)",
     backgroundClip: "text",
     WebkitBackgroundClip: "text",
     WebkitTextFillColor: "transparent",
-    textShadow: "0 4px 8px rgba(0, 0, 0, 0.5)",
+    textShadow: "0 4px 8px rgba(0, 255, 0, 0.5)",
     letterSpacing: "-0.02em",
   },
   search: {
@@ -117,19 +117,19 @@ const useStyles = makeStyles((theme) => ({
       borderRadius: 20,
       transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
       "& fieldset": { 
-        borderColor: "rgba(16, 185, 129, 0.2)",
+        borderColor: "rgba(0, 255, 0, 0.4)",
         borderWidth: 1,
       },
       "&:hover fieldset": { 
-        borderColor: "rgba(16, 185, 129, 0.4)",
+        borderColor: "rgba(0, 255, 0, 0.6)",
       },
       "&.Mui-focused fieldset": { 
-        borderColor: "#10b981",
-        boxShadow: "0 0 0 3px rgba(16, 185, 129, 0.1)",
+        borderColor: "#00ff00",
+        boxShadow: "0 0 0 3px rgba(0, 255, 0, 0.2)",
       },
       "&:hover": {
         transform: "translateY(-2px)",
-        background: "rgba(16, 185, 129, 0.05)",
+        background: "rgba(0, 255, 0, 0.08)",
       }
     },
     "& input": { 
@@ -157,7 +157,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(3),
     transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
     cursor: "pointer",
-    border: "1px solid rgba(16, 185, 129, 0.1)",
+    border: "1px solid rgba(0, 255, 0, 0.2)",
     boxShadow: "0 8px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.03)",
     position: "relative",
     overflow: "hidden",
@@ -168,14 +168,14 @@ const useStyles = makeStyles((theme) => ({
       left: 0,
       right: 0,
       bottom: 0,
-      background: "linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, transparent 100%)",
+      background: "linear-gradient(135deg, rgba(0, 255, 0, 0.08) 0%, transparent 100%)",
       opacity: 0,
       transition: "opacity 0.3s ease",
     },
     "&:hover": {
       transform: "translateY(-8px) scale(1.02)",
-      boxShadow: "0 20px 50px rgba(16, 185, 129, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.08)",
-      border: "1px solid rgba(16, 185, 129, 0.2)",
+      boxShadow: "0 20px 50px rgba(0, 255, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.08)",
+      border: "1px solid rgba(0, 255, 0, 0.4)",
       "&::before": {
         opacity: 1,
       }
@@ -201,7 +201,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "1.75rem",
     fontWeight: 700,
     textTransform: "uppercase",
-    background: "linear-gradient(135deg, #ffffff 0%, #10b981 50%, #ffffff 100%)",
+    background: "linear-gradient(135deg, #ffffff 0%, #00ff00 50%, #ffffff 100%)",
     backgroundClip: "text",
     WebkitBackgroundClip: "text",
     WebkitTextFillColor: "transparent",
@@ -221,9 +221,9 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 600,
   },
   profit: {
-    color: "#10b981",
+    color: "#00ff00",
     fontWeight: 700,
-    textShadow: "0 0 8px rgba(16, 185, 129, 0.3)",
+    textShadow: "0 0 8px rgba(0, 255, 0, 0.4)",
   },
   loss: {
     color: "#ef4444",
@@ -240,23 +240,23 @@ const useStyles = makeStyles((theme) => ({
       transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
       fontWeight: 600,
       background: "rgba(0, 0, 0, 0.6)",
-      border: "1px solid rgba(16, 185, 129, 0.15)",
+      border: "1px solid rgba(0, 255, 0, 0.25)",
       backdropFilter: "blur(10px)",
       borderRadius: 12,
       margin: "0 4px",
       "&:hover": {
-        background: "rgba(16, 185, 129, 0.1)",
+        background: "rgba(0, 255, 0, 0.15)",
         transform: "translateY(-2px)",
         boxShadow: "0 8px 20px rgba(0, 0, 0, 0.4)",
-        border: "1px solid rgba(16, 185, 129, 0.25)",
+        border: "1px solid rgba(0, 255, 0, 0.4)",
       },
       "&.Mui-selected": {
-        background: "linear-gradient(135deg, #000000 0%, #10b981 50%, #000000 100%)",
+        background: "linear-gradient(135deg, #000000 0%, #00ff00 50%, #000000 100%)",
         color: "#ffffff",
-        border: "1px solid rgba(16, 185, 129, 0.3)",
+        border: "1px solid rgba(0, 255, 0, 0.5)",
         boxShadow: "0 4px 20px rgba(0, 0, 0, 0.6)",
         "&:hover": { 
-          background: "linear-gradient(135deg, #0a0a0a 0%, #059669 50%, #0a0a0a 100%)",
+          background: "linear-gradient(135deg, #0a0a0a 0%, #00dd00 50%, #0a0a0a 100%)",
           transform: "translateY(-2px)",
         },
       },
@@ -268,18 +268,18 @@ const useStyles = makeStyles((theme) => ({
     height: 8,
     marginBottom: 24,
     backdropFilter: "blur(10px)",
-    border: "1px solid rgba(16, 185, 129, 0.1)",
+    border: "1px solid rgba(0, 255, 0, 0.2)",
     "& .MuiLinearProgress-bar": {
-      background: "linear-gradient(90deg, #000000 0%, #10b981 50%, #000000 100%)",
+      background: "linear-gradient(90deg, #000000 0%, #00ff00 50%, #000000 100%)",
       borderRadius: 8,
-      boxShadow: "0 0 20px rgba(16, 185, 129, 0.2)",
+      boxShadow: "0 0 20px rgba(0, 255, 0, 0.3)",
     }
   }
 }));
 
 const balancedTheme = createTheme({
   palette: {
-    primary: { main: "#10b981" },
+    primary: { main: "#00ff00" },
     type: "dark",
   },
   typography: {
